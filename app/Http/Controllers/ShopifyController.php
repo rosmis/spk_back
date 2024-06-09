@@ -13,7 +13,7 @@ class ShopifyController extends Controller
     ) {
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
         /** @var ShopifyService $shopifyApi */
         $shopifyApi = app(ShopifyService::class);

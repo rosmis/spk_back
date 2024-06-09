@@ -10,6 +10,7 @@ use App\Dto\ShopifyConfigDto;
 use Illuminate\Support\Collection;
 use Shopify\Clients\Storefront;
 use Shopify\Context;
+use Shopify\Exception\MissingArgumentException;
 
 readonly class ShopifyService implements ShopifyInterface
 {
@@ -19,12 +20,16 @@ readonly class ShopifyService implements ShopifyInterface
     public function __construct(
         public ShopifyConfigDto $config
     ) {
-        Context::initialize(...$this->config->toArray());
+        try {
+            Context::initialize(...$this->config->toArray());
 
-        $this->storefrontClient = new Storefront(
-            $this->config->hostName,
-            $this->config->apiKey
-        );
+            $this->storefrontClient = new Storefront(
+                $this->config->hostName,
+                $this->config->apiKey
+            );
+        } catch (MissingArgumentException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -138,6 +143,8 @@ readonly class ShopifyService implements ShopifyInterface
 
         $response = $this->storefrontClient->query(data: $queryString);
 
-        return ProductDto::fromArray($response->getDecodedBody()['data']['productByHandle']);
+        return ProductDto::fromArray(
+            $response->getDecodedBody()['data']['productByHandle']
+        );
     }
 }
