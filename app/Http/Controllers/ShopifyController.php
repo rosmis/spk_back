@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Services\ShopifyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,12 +16,21 @@ class ShopifyController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        /** @var ShopifyService $shopifyApi */
         $shopifyApi = app(ShopifyService::class);
 
-        dd($shopifyApi->fetchProduts());
+        return ProductResource::collection(
+            $shopifyApi->fetchProduts()
+        )->response();
+    }
 
-        return response()->json([
-            'message' => 'Hello from ShopifyController',
-        ]);
+    public function show(string $handle): JsonResponse
+    {
+        /** @var ShopifyService $shopifyApi */
+        $shopifyApi = app(ShopifyService::class);
+
+        $product = $shopifyApi->fetchProductByHandle($handle);
+
+        return ProductResource::make($product)->response();
     }
 }

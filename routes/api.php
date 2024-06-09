@@ -9,4 +9,9 @@ Route::get('user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('test', [ShopifyController::class, 'index']);
+/*Route::prefix('products')->group(function () {
+
+});*/
+
+Route::get('/products', [ShopifyController::class, 'index']);
+Route::get('/products/{handle}', [ShopifyController::class, 'show']);
