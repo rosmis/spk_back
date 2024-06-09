@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-final class VariantDto
+final class ProductVariantDto
 {
     public function __construct(
         public string $id,
@@ -20,10 +20,10 @@ final class VariantDto
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['node']['id'],
-            title: $data['node']['title'],
-            quantityAvailable: (int) $data['node']['quantityAvailable'],
-            price: $data['node']['price'],
+            id: $data['id'],
+            title: $data['title'],
+            quantityAvailable: (int) $data['quantityAvailable'],
+            price: $data['price'],
         );
     }
 }

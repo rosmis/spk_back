@@ -56,7 +56,26 @@ readonly class ShopifyService implements ShopifyInterface
                     }
                   }
                 }
+                media(first: 3) {
+                  edges {
+                    node {
+                      mediaContentType
+                      alt
+                      ...mediaFieldsByType
+                    }
+                  }
+                }
               }
+            }
+          }
+        }
+
+        fragment mediaFieldsByType on Media {
+          ...on MediaImage {
+            id
+            image {
+              url
+              altText
             }
           }
         }
@@ -92,6 +111,26 @@ readonly class ShopifyService implements ShopifyInterface
                   }
                 }
               }
+            }
+
+            media(first: 3) {
+              edges {
+                node {
+                  mediaContentType
+                  alt
+                  ...mediaFieldsByType
+                }
+              }
+            }
+          }
+        }
+
+        fragment mediaFieldsByType on Media {
+          ...on MediaImage {
+            id
+            image {
+              url
+              altText
             }
           }
         }

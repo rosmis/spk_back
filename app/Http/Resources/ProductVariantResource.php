@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class ProductVariantResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,8 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
-            'variants' => ProductVariantResource::collection($this->variants),
-            'images' => ProductImageResource::collection($this->images),
+            'price' => $this->price,
+            'quantityAvailable' => $this->quantityAvailable,
         ];
     }
 }
