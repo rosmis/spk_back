@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\ShopifyService;
 use Illuminate\Http\JsonResponse;

@@ -13,6 +13,7 @@ use Shopify\Context;
 
 readonly class ShopifyService implements ShopifyInterface
 {
+    // TODO - Error handling
     private Storefront $storefrontClient;
 
     public function __construct(
@@ -26,23 +27,33 @@ readonly class ShopifyService implements ShopifyInterface
         );
     }
 
+    /**
+     * @return Collection<int,ProductDto>
+     */
     public function fetchProduts(): Collection
     {
         $queryString = <<<'QUERY'
-        {
-          productByHandle(handle: "soap") {
-            id
-            title
-            description
-            variants(first: 3) {
-              edges {
-                node {
-                  id
-                  title
-                  quantityAvailable
-                  price {
-                    amount
-                    currencyCode
+        query getProductsAndVariants {
+          products(first: 9) {
+            edges {
+              cursor
+              node {
+                id
+                title
+                description
+                handle
+                variants(first: 3) {
+                  edges {
+                    cursor
+                    node {
+                      id
+                      title
+                      quantityAvailable
+                      price {
+                        amount
+                        currencyCode
+                      }
+                    }
                   }
                 }
               }
@@ -54,7 +65,10 @@ readonly class ShopifyService implements ShopifyInterface
         $response = $this->storefrontClient->query(data: $queryString);
 
         return Collection::make(
-            $response->getDecodedBody()['data']
+            array_map(
+                fn (array $product) => ProductDto::fromArray($product['node']),
+                $response->getDecodedBody()['data']['products']['edges']
+            )
         );
     }
 
