@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->string('shopify_gid');
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->string('alt');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();

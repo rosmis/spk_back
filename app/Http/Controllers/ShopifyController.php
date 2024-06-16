@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProductResource;
 use App\Services\ShopifyService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ShopifyController extends Controller
 {
