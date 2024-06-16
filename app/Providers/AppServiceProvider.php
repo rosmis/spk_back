@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             ShopifyConfigDto::class,
-            static fn () => ShopifyConfigDto::fromArray(config('shopify')),
+            static fn () => ShopifyConfigDto::fromArray(config('shopify.config')),
         );
 
         $this->app->bind(ShopifyInterface::class, ShopifyService::class);
