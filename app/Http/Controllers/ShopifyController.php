@@ -9,25 +9,22 @@ use Illuminate\Http\JsonResponse;
 class ShopifyController extends Controller
 {
     public function __construct(
+        private readonly ShopifyService $shopifyService
     ) {
     }
 
     public function index(): JsonResponse
     {
-        /** @var ShopifyService $shopifyApi */
-        $shopifyApi = app(ShopifyService::class);
-
         return ProductResource::collection(
-            $shopifyApi->fetchProduts()
+            $this->shopifyService->fetchProduts()
         )->response();
     }
 
     public function show(string $handle): JsonResponse
     {
-        /** @var ShopifyService $shopifyApi */
-        $shopifyApi = app(ShopifyService::class);
-
-        $product = $shopifyApi->fetchProductByHandle($handle);
+        $product = $this
+            ->shopifyService
+            ->fetchProductByHandle($handle);
 
         return ProductResource::make($product)->response();
     }

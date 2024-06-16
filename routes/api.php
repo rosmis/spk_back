@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\ShopifyController;
+declare(strict_types=1);
+
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,6 +11,6 @@ Route::get('user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('products')->group(function () {
-    Route::get('', [ShopifyController::class, 'index']);
-    Route::get('{handle}', [ShopifyController::class, 'show']);
+    Route::get('', [ProductController::class, 'index']);
+    Route::get('{handle}', [ProductController::class, 'show']);
 });

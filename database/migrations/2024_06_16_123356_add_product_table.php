@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('shopify_gid');
+            $table->string('handle');
             $table->string('title');
             $table->text('description');
             $table->timestamps();
