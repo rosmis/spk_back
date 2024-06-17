@@ -10,7 +10,7 @@ final class ProductVariantDto
         public string $id,
         public string $title,
         public int $quantityAvailable,
-        public array $price,
+        public float $price,
     ) {
     }
 
@@ -20,10 +20,10 @@ final class ProductVariantDto
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
+            id: $data['admin_graphql_api_id'],
             title: $data['title'],
             quantityAvailable: (int) $data['inventory_quantity'],
-            price: $data['price'],
+            price: (float) $data['price'],
         );
     }
 }

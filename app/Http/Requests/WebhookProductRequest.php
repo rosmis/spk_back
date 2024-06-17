@@ -23,7 +23,6 @@ class WebhookProductRequest extends FormRequest
             'variants.*.title' => 'required|string',
             'variants.*.price' => 'required|numeric',
             'variants.*.inventory_quantity' => 'required|integer',
-            'variants.*.id' => 'required|integer',
 
             'images.*.admin_graphql_api_id' => 'required|string',
             'images.*.src' => 'required|string',

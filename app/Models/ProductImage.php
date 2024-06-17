@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $shopify_gid
  * @property string $url
- * @property string $alt
+ * @property ?string $alt
  * @property string $product_id
- * @property MediaContentType $media_content_type
+ * @property ?MediaContentType $media_content_type
  * @property string $created_at
  * @property string $updated_at
  *
@@ -24,7 +24,7 @@ class ProductImage extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id', 'shopify_gid'];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'media_content_type' => MediaContentType::class,

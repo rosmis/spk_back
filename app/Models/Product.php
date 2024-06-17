@@ -27,7 +27,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id', 'shopify_gid'];
+    protected $guarded = ['id'];
 
     public function variants(): HasMany
     {
