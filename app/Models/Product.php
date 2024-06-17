@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 /**
  * @property int $id
  * @property string $shopify_gid
+ * @property string $handle
  * @property string $title
  * @property string $description
  * @property Carbon $created_at

@@ -12,7 +12,6 @@ final class ProductImageDto
         public string $id,
         public string $url,
         public string $alt,
-        public MediaContentType $mediaContentType,
     ) {
     }
 
@@ -23,9 +22,8 @@ final class ProductImageDto
     {
         return new self(
             id: $data['id'],
-            url: $data['image']['url'],
+            url: $data['src'],
             alt: $data['alt'],
-            mediaContentType: MediaContentType::from($data['mediaContentType'])
         );
     }
 }

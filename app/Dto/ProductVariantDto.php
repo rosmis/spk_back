@@ -22,7 +22,7 @@ final class ProductVariantDto
         return new self(
             id: $data['id'],
             title: $data['title'],
-            quantityAvailable: (int) $data['quantityAvailable'],
+            quantityAvailable: (int) $data['inventory_quantity'],
             price: $data['price'],
         );
     }

@@ -13,6 +13,7 @@ final class ProductDto
     public function __construct(
         public string $id,
         public string $title,
+        public string $handle,
         public string $description,
         public array $variants,
         public array $images
@@ -25,16 +26,17 @@ final class ProductDto
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
+            id: $data['admin_graphql_api_id'],
             title: $data['title'],
-            description: $data['description'],
+            handle: $data['handle'],
+            description: $data['body_html'],
             variants: array_map(
-                fn (array $variant) => ProductVariantDto::fromArray($variant['node']),
-                $data['variants']['edges']
+                fn (array $variant) => ProductVariantDto::fromArray($variant),
+                $data['variants']
             ),
             images: array_map(
-                fn (array $image) => ProductImageDto::fromArray($image['node']),
-                $data['media']['edges']
+                fn (array $image) => ProductImageDto::fromArray($image),
+                $data['images']
             )
         );
     }
