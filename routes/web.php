@@ -9,4 +9,4 @@ use App\Http\Controllers\ShopifyController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
-Route::post('webhook', [ShopifyController::class, 'webhook']);
+Route::post('webhook/product', [ShopifyController::class, 'webhook']);
