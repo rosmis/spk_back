@@ -11,13 +11,15 @@ Route::get('user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// TODO Protect the routes below with the auth:sanctum middleware
-Route::prefix('products')->group(function () {
-    Route::get('', [ProductController::class, 'index']);
-    Route::get('{handle}', [ProductController::class, 'show']);
-});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('products')->group(function () {
+        Route::get('', [ProductController::class, 'index']);
+        Route::get('{handle}', [ProductController::class, 'show']);
+    });
 
-Route::prefix('cart')->group(function () {
-    Route::get('{user}', [CartController::class, 'show']);
-    Route::post('', [CartController::class, 'store']);
+    Route::prefix('cart')->group(function () {
+        Route::get('{user}', [CartController::class, 'show']);
+        Route::post('', [CartController::class, 'store']);
+        Route::patch('{cart}', [CartController::class, 'update']);
+    });
 });

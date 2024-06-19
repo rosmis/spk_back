@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Cart;
 
-final class CreateCartItemDto
+final class CartItemDto
 {
     public function __construct(
         public int $productId,

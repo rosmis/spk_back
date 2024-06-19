@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Dto\Cart\CreateCartItemDto;
+use App\Dto\Cart\CartItemDto;
 use App\Enums\CartStatus;
-use App\Exceptions\ActivePendingCartException;
+use App\Exceptions\Cart\ActivePendingCartException;
+use App\Exceptions\Cart\BadStatusCartException;
+use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Models\Cart;
 
 readonly class CartService
@@ -44,6 +46,32 @@ readonly class CartService
                 'user_id' => auth()->id(),
                 'status' => CartStatus::Pending,
             ]);
+
+        return $cart;
+    }
+
+    /**
+     * @param array<int,CartItemDto> $cartItems
+     * @throws BadStatusCartException
+     */
+    public function update(array $cartItems, Cart $cart)
+    {
+        if ($cart->status !== CartStatus::Pending) {
+            throw new BadStatusCartException();
+        }
+
+        if (auth()->id !== $cart->user_id) {
+            throw new IncorrectUserIdCart();
+        }
+
+        foreach ($cartItems as $cartItem) {
+            $cart->cartItems()->updateOrCreate([
+                'variant_id' => $cartItem->variantId,
+            ], [
+                'product_id' => $cartItem->productId,
+                'quantity' => $cartItem->quantity,
+            ]);
+        }
 
         return $cart;
     }

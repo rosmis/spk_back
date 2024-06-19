@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Cart;
 
 use Illuminate\Auth\Access\AuthorizationException;
 

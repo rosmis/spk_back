@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Dto\Cart\CreateCartItemDto;
-use App\Exceptions\ActivePendingCartException;
+use App\Dto\Cart\CartItemDto;
+use App\Exceptions\Cart\ActivePendingCartException;
 use App\Http\Requests\CreateCartRequest;
 use App\Http\Resources\Cart\CartResource;
+use App\Models\Cart;
 use App\Models\User;
 use App\Services\CartService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,15 +35,16 @@ class CartController extends Controller
         return CartResource::make($cart);
     }
 
-    /*public function store(CreateCartRequest $request): JsonResource
+    public function update(Cart $cart, CreateCartRequest $request): JsonResource
     {
-        $cart = $this->cartService->store(
+        $cart = $this->cartService->update(
             array_map(
-                fn (array $item) => CreateCartItemDto::fromArray($item),
+                fn (array $item) => CartItemDto::fromArray($item),
                 $request->safe()->toArray()
-            )
+            ),
+            $cart
         );
 
         return CartResource::make($cart);
-    }*/
+    }
 }
