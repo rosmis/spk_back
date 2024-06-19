@@ -38,6 +38,12 @@ class ShopifyController extends Controller
         return ProductResource::make($product)->response();
     }
 
+    /*public function setCartItems(array $products): JsonResponse
+    {
+        $cartItems = $this->shopifyService->setCartItems();
+        return response()->json($cartItems);
+    }*/
+
     public function webhook(WebhookProductRequest $request): JsonResponse
     {
         if (! $this->validateWebhookSignature($request)) {
