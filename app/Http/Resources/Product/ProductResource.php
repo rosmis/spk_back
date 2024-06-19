@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,8 +18,14 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'variants' => ProductVariantResource::collection($this->variants),
-            'images' => ProductImageResource::collection($this->images),
+            'variants' => $this->whenLoaded(
+                'variants',
+                ProductVariantResource::collection($this->variants)
+            ),
+            'images' => $this->whenLoaded(
+                'images',
+                ProductImageResource::collection($this->images)
+            ),
         ];
     }
 }

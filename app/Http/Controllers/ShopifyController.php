@@ -7,10 +7,10 @@ namespace App\Http\Controllers;
 use App\Dto\ProductDto;
 use App\Exceptions\InvalidWebhookSignatureException;
 use App\Http\Requests\WebhookProductRequest;
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\Product\ProductResource;
 use App\Jobs\ProcessWebhookProductJob;
-use App\Traits\ValidateWebhookSignature;
 use App\Services\ShopifyService;
+use App\Traits\ValidateWebhookSignature;
 use Illuminate\Http\JsonResponse;
 
 class ShopifyController extends Controller

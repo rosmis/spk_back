@@ -16,7 +16,7 @@ readonly class ProductService
     public function index(): LengthAwarePaginator
     {
         return Product::query()
-            ->with(['images'])
+            ->with(['images', 'variants'])
             ->paginate(9);
     }
 
@@ -25,7 +25,7 @@ readonly class ProductService
         /** @var Product $product */
         $product = Product::query()
             ->where('handle', $handle)
-            ->with(['images'])
+            ->with(['images', 'variants'])
             ->firstOrFail();
 
         return $product;
