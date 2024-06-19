@@ -19,4 +19,5 @@ Route::prefix('products')->group(function () {
 
 Route::prefix('cart')->group(function () {
     Route::get('{user}', [CartController::class, 'show']);
+    Route::post('', [CartController::class, 'store']);
 });
