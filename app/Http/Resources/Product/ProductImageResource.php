@@ -18,7 +18,7 @@ class ProductImageResource extends JsonResource
             'id' => $this->id,
             'url' => $this->url,
             'alt' => $this->alt,
-            'mediaContentType' => $this->mediaContentType->value,
+            'mediaContentType' => $this->mediaContentType?->value,
         ];
     }
 }
