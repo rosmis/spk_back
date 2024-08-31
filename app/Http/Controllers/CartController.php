@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Dto\Cart\CartItemDto;
 use App\Exceptions\Cart\ActivePendingCartException;
+use App\Exceptions\Cart\BadStatusCartException;
+use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Http\Requests\CreateCartRequest;
 use App\Http\Resources\Cart\CartResource;
 use App\Models\Cart;
@@ -18,10 +20,10 @@ class CartController extends Controller
     ) {
     }
 
-    public function show(User $user): JsonResource
+    public function index(): JsonResource
     {
         return CartResource::make(
-            $this->cartService->show($user->id)
+            $this->cartService->show()
         );
     }
 
@@ -35,6 +37,10 @@ class CartController extends Controller
         return CartResource::make($cart);
     }
 
+    /**
+     * @throws BadStatusCartException
+     * @throws IncorrectUserIdCart
+     */
     public function update(Cart $cart, CreateCartRequest $request): JsonResource
     {
         $cart = $this->cartService->update(

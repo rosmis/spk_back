@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('cart')->group(function () {
-        Route::get('{user}', [CartController::class, 'show']);
+        Route::get('', [CartController::class, 'index']);
         Route::post('', [CartController::class, 'store']);
         Route::patch('{cart}', [CartController::class, 'update']);
     });

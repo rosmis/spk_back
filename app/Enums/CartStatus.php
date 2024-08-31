@@ -8,5 +8,5 @@ enum CartStatus: string
 {
     case Pending = 'pending';
     case Completed = 'completed';
-    case Cancelled = 'cancelled';
+    case Canceled = 'canceled';
 }

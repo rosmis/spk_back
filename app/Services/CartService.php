@@ -13,13 +13,13 @@ use App\Models\Cart;
 
 readonly class CartService
 {
-    public function show(int $user_id): Cart
+    public function show(): ?Cart
     {
         /** @var ?Cart $cart */
         $cart = Cart::query()
-            ->where('user_id', $user_id)
+            ->where('user_id', auth()->id())
             ->where('status', CartStatus::Pending)
-            ->with('cartItems')
+            ->with('cartItems.productVariant')
             ->first();
 
         return $cart;
@@ -52,7 +52,7 @@ readonly class CartService
 
     /**
      * @param array<int,CartItemDto> $cartItems
-     * @throws BadStatusCartException
+     * @throws BadStatusCartException|IncorrectUserIdCart
      */
     public function update(array $cartItems, Cart $cart)
     {

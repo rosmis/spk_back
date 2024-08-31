@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         return ProductResource::collection(
-            $this->productService->index()
+            $this->productService->list()
         )->response();
     }
 

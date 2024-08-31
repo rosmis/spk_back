@@ -9,11 +9,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 readonly class ProductService
 {
-    public function __construct(
-    ) {
-    }
-
-    public function index(): LengthAwarePaginator
+    public function list(): LengthAwarePaginator
     {
         return Product::query()
             ->with(['images', 'variants'])
