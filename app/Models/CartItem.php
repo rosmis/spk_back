@@ -25,6 +25,8 @@ class CartItem extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function cart(): BelongsTo
     {
         return $this->belongsTo(Cart::class);

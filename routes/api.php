@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('cart')->group(function () {
         Route::get('', [CartController::class, 'index']);
         Route::post('', [CartController::class, 'store']);
-        Route::patch('{cart}', [CartController::class, 'update']);
+        Route::patch('{cart}', [CartController::class, 'update'])
+            ->whereNumber('cart');
     });
 });

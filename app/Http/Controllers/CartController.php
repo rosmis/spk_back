@@ -9,7 +9,6 @@ use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Http\Requests\CreateCartRequest;
 use App\Http\Resources\Cart\CartResource;
 use App\Models\Cart;
-use App\Models\User;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,9 +32,11 @@ class CartController extends Controller
     /**
      * @throws ActivePendingCartException
      */
-    public function store(): JsonResource
+    public function store(Request $request): JsonResource
     {
-        $cart = $this->cartService->store();
+        $cart = $this->cartService->store(
+            $request->user()
+        );
 
         return CartResource::make($cart);
     }
@@ -51,7 +52,8 @@ class CartController extends Controller
                 fn (array $item) => CartItemDto::fromArray($item),
                 $request->safe()->toArray()
             ),
-            $cart
+            $cart,
+            $request->user()
         );
 
         return CartResource::make($cart);

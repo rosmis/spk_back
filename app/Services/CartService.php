@@ -29,11 +29,11 @@ readonly class CartService
     /**
      * @throws ActivePendingCartException
      */
-    public function store(): Cart
+    public function store(User $user): Cart
     {
         /** @var ?Cart $existingPendingCart */
         $existingPendingCart = Cart::query()
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->where('status', CartStatus::Pending)
             ->first();
 
@@ -44,7 +44,7 @@ readonly class CartService
         /** @var Cart $cart */
         $cart = Cart::query()
             ->create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'status' => CartStatus::Pending,
             ]);
 
@@ -55,21 +55,20 @@ readonly class CartService
      * @param array<int,CartItemDto> $cartItems
      * @throws BadStatusCartException|IncorrectUserIdCart
      */
-    public function update(array $cartItems, Cart $cart)
+    public function update(array $cartItems, Cart $cart, User $user): Cart
     {
         if ($cart->status !== CartStatus::Pending) {
             throw new BadStatusCartException();
         }
 
-        if (auth()->id !== $cart->user_id) {
+        if ($user->id !== $cart->user_id) {
             throw new IncorrectUserIdCart();
         }
 
         foreach ($cartItems as $cartItem) {
             $cart->cartItems()->updateOrCreate([
-                'variant_id' => $cartItem->variantId,
+                'product_variant_id' => $cartItem->variantId,
             ], [
-                'product_id' => $cartItem->productId,
                 'quantity' => $cartItem->quantity,
             ]);
         }
