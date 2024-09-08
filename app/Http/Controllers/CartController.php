@@ -58,4 +58,13 @@ class CartController extends Controller
 
         return CartResource::make($cart);
     }
+
+//    public function getCartChekoutUrl(Cart $cart): JsonResponse
+//    {
+//        $cartCheckoutUrl = $this->cartService->getCartCheckoutUrl($cart);
+//
+//        return new JsonResponse([
+//            'checkout_url' => $cartCheckoutUrl
+//        ]);
+//    }
 }
