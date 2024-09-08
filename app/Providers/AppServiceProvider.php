@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\ShopifyInterface;
-use App\Dto\ShopifyConfigDto;
+use App\Factories\ShopifyConfigDtoFactory;
 use App\Services\ShopifyService;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,8 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            ShopifyConfigDto::class,
-            static fn () => ShopifyConfigDto::fromArray(config('shopify.config')),
+            ShopifyConfigDtoFactory::class, ShopifyConfigDtoFactory::class
         );
 
         $this->app->bind(ShopifyInterface::class, ShopifyService::class);

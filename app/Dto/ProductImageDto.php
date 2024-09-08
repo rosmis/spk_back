@@ -19,9 +19,9 @@ final class ProductImageDto
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['admin_graphql_api_id'],
-            url: $data['src'],
-            alt: $data['alt'] ?? null,
+            id: $data['node']['id'],
+            url: $data['node']['image']['url'],
+            alt: $data['node']['image']['altText'] ?? null,
         );
     }
 }

@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Contracts\ShopifyInterface;
 use App\Dto\ProductDto;
 use App\Dto\ShopifyConfigDto;
+use App\Factories\ShopifyConfigDtoFactory;
+use App\Factories\StoreFrontFactory;
 use Illuminate\Support\Collection;
 use Shopify\Clients\Storefront;
 use Shopify\Context;
@@ -18,18 +20,9 @@ readonly class ShopifyService implements ShopifyInterface
     private Storefront $storefrontClient;
 
     public function __construct(
-        public ShopifyConfigDto $config
+        public StoreFrontFactory $storeFrontFactory
     ) {
-        try {
-            Context::initialize(...$this->config->toArray());
-
-            $this->storefrontClient = new Storefront(
-                $this->config->hostName,
-                $this->config->apiKey
-            );
-        } catch (MissingArgumentException $e) {
-            throw $e;
-        }
+        $this->storefrontClient = $this->storeFrontFactory->make();
     }
 
     /**
@@ -104,6 +97,7 @@ readonly class ShopifyService implements ShopifyInterface
             id
             title
             description
+            handle
             variants(first: 3) {
               edges {
                 node {
@@ -142,6 +136,8 @@ readonly class ShopifyService implements ShopifyInterface
         QUERY;
 
         $response = $this->storefrontClient->query(data: $queryString);
+
+//        dd($response->getDecodedBody()['data']['productByHandle']);
 
         return ProductDto::fromArray(
             $response->getDecodedBody()['data']['productByHandle']
