@@ -9,9 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CartResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
+     * @property Cart $resource
      */
     public function toArray(Request $request): ?array
     {
@@ -20,12 +18,12 @@ class CartResource extends JsonResource
         }
 
         return [
-            'id' => $this->id,
+            'id' => $this->resource->id,
             'items' => $this->whenLoaded(
                 'cartItems',
-                CartItemResource::collection($this->cartItems)
+                CartItemResource::collection($this->resource->cartItems)
             ),
-            'status' => $this->status,
+            'status' => $this->resource->status,
         ];
     }
 

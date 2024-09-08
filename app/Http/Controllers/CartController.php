@@ -11,6 +11,7 @@ use App\Http\Resources\Cart\CartResource;
 use App\Models\Cart;
 use App\Models\User;
 use App\Services\CartService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CartController extends Controller
@@ -20,10 +21,12 @@ class CartController extends Controller
     ) {
     }
 
-    public function index(): JsonResource
+    public function index(Request $request): JsonResource
     {
         return CartResource::make(
-            $this->cartService->show()
+            $this->cartService->show(
+                $request->user()
+            )
         );
     }
 

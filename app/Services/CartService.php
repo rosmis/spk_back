@@ -10,14 +10,15 @@ use App\Exceptions\Cart\ActivePendingCartException;
 use App\Exceptions\Cart\BadStatusCartException;
 use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Models\Cart;
+use App\Models\User;
 
 readonly class CartService
 {
-    public function show(): ?Cart
+    public function show(User $user): ?Cart
     {
         /** @var ?Cart $cart */
         $cart = Cart::query()
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->where('status', CartStatus::Pending)
             ->with('cartItems.productVariant')
             ->first();
