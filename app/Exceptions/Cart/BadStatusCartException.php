@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Cart;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class BadStatusCartException extends AuthorizationException
+class BadStatusCartException extends BadRequestHttpException
 {
     public function __construct($message = 'Cart cannot be updated because it is not in the correct status.')
     {

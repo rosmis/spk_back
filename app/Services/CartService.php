@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Actions\CheckCartItemVariantAvailability;
 use App\Dto\Cart\CartItemDto;
 use App\Enums\CartStatus;
 use App\Exceptions\Cart\ActivePendingCartException;
 use App\Exceptions\Cart\BadStatusCartException;
 use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\User;
+use Shopify\Exception\MissingArgumentException;
 
 readonly class CartService
 {
+    public function __construct(
+        public ShopifyService $shopifyService
+    ) {
+    }
+
     public function show(User $user): ?Cart
     {
         /** @var ?Cart $cart */
@@ -52,11 +60,12 @@ readonly class CartService
     }
 
     /**
-     * @param array<int,CartItemDto> $cartItems
      * @throws BadStatusCartException|IncorrectUserIdCart
      */
-    public function update(array $cartItems, Cart $cart, User $user): Cart
+    public function update(CartItemDto $cartItem, Cart $cart, User $user): Cart
     {
+        app()->call(CheckCartItemVariantAvailability::class, ['cartItem' => $cartItem]);
+
         if ($cart->status !== CartStatus::Pending) {
             throw new BadStatusCartException();
         }
@@ -65,14 +74,48 @@ readonly class CartService
             throw new IncorrectUserIdCart();
         }
 
-        foreach ($cartItems as $cartItem) {
-            $cart->cartItems()->updateOrCreate([
-                'product_variant_id' => $cartItem->variantId,
-            ], [
-                'quantity' => $cartItem->quantity,
-            ]);
-        }
+        $cart->cartItems()->updateOrCreate([
+            'product_variant_id' => $cartItem->variantId,
+        ], [
+            'quantity' => $cartItem->quantity,
+        ]);
 
         return $cart;
+    }
+
+    public function destroy(Cart $cart, int $cartItemId): void
+    {
+        $cart->cartItems()->where('id', $cartItemId)->delete();
+    }
+
+    /**
+     * @throws MissingArgumentException
+     * @throws BadStatusCartException
+     * @throws IncorrectUserIdCart
+     */
+    public function getCartCheckoutUrl(Cart $cart, User $user): string
+    {
+        // TODO check items availability
+
+        if ($user->id !== $cart->user_id) {
+            throw new IncorrectUserIdCart();
+        }
+
+        if ($cart->status !== CartStatus::Pending) {
+            throw new BadStatusCartException();
+        }
+
+        if ($cart->cartItems->isEmpty()) {
+            throw new MissingArgumentException('Cart items are empty');
+        }
+
+        return $this->shopifyService->generateCartCheckoutUrl(
+            $cart->cartItems->map(static fn (CartItem $cartItem) =>
+                new CartItemDto(
+                    quantity: $cartItem->quantity,
+                    variantId: $cartItem->productVariant->shopify_gid,
+                )
+            )->toArray()
+        );
     }
 }

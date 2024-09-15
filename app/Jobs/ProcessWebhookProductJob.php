@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Dto\ProductDto;
+use App\Dto\Webhook\WebhookProductDto;
 use App\Models\Product;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,13 +16,13 @@ class ProcessWebhookProductJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private ProductDto $productDto;
+    private WebhookProductDto $productDto;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        ProductDto $productDto
+        WebhookProductDto $productDto
     )
     {
         $this->productDto = $productDto;

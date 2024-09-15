@@ -12,9 +12,8 @@ class CreateCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'items.*.productId' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.variantId' => 'nullable|exists:product_variants,id',
+            'quantity' => 'required|integer|min:1',
+            'variantId' => 'required|integer|exists:product_variants,id',
         ];
     }
 
@@ -24,12 +23,12 @@ class CreateCartRequest extends FormRequest
     public function messages()
     {
         return [
-            'items.*.productId.required' => 'Product ID is required',
-            'items.*.productId.exists' => 'Product ID does not exist',
-            'items.*.quantity.required' => 'Quantity is required',
-            'items.*.quantity.integer' => 'Quantity must be an integer',
-            'items.*.quantity.min' => 'Quantity must be at least 1',
-            'items.*.variantId.exists' => 'Variant ID does not exist',
+            'quantity.required' => 'The quantity field is required.',
+            'quantity.integer' => 'The quantity field must be an integer.',
+            'quantity.min' => 'The quantity field must be at least 1.',
+            'variantId.required' => 'The variantId field is required.',
+            'variantId.integer' => 'The variantId field must be an integer.',
+            'variantId.exists' => 'The selected variantId is invalid.',
         ];
     }
 }

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\ShopifyInterface;
+use App\Dto\Cart\CartItemDto;
 use App\Dto\ProductDto;
-use App\Dto\ShopifyConfigDto;
-use App\Factories\ShopifyConfigDtoFactory;
 use App\Factories\StoreFrontFactory;
+use Exception;
 use Illuminate\Support\Collection;
 use Shopify\Clients\Storefront;
 use Shopify\Context;
@@ -137,10 +137,46 @@ readonly class ShopifyService implements ShopifyInterface
 
         $response = $this->storefrontClient->query(data: $queryString);
 
-//        dd($response->getDecodedBody()['data']['productByHandle']);
-
         return ProductDto::fromArray(
             $response->getDecodedBody()['data']['productByHandle']
         );
+    }
+
+    /**
+     * @param array<int,CartItemDto> $cartItems
+     * @throws MissingArgumentException
+     * @throws Exception
+     */
+    public function generateCartCheckoutUrl(array $cartItems): string
+    {
+        $lineItemsString = implode(', ', array_map(function ($lineItem) {
+            return "{merchandiseId: \"{$lineItem->variantId}\", quantity: {$lineItem->quantity}}";
+        }, $cartItems));
+
+        $queryString = <<<QUERY
+            mutation {
+              cartCreate(
+                input: {
+                  lines: $lineItemsString
+                }
+              ) {
+                cart {
+                  id
+                  checkoutUrl
+                }
+              }
+            }
+        QUERY;
+
+
+        try {
+            $response = $this->storefrontClient->query(data: $queryString);
+
+            $checkoutData = $response->getDecodedBody()['data'];
+
+            return $checkoutData['cartCreate']['cart']['checkoutUrl'];
+        } catch (Exception $e) {
+            throw new Exception('Failed to create checkout: ' . $e->getMessage());
+        }
     }
 }

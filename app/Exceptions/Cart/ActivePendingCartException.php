@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Cart;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ActivePendingCartException extends AuthorizationException
+class ActivePendingCartException extends BadRequestHttpException
 {
     public function __construct($message = 'You already have an active cart. Please complete or cancel it before creating a new one.')
     {

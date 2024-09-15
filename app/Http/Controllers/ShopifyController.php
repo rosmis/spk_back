@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Dto\ProductDto;
+use App\Dto\Webhook\WebhookProductDto;
 use App\Exceptions\InvalidWebhookSignatureException;
 use App\Http\Requests\WebhookProductRequest;
 use App\Http\Resources\Shopify\ShopifyProductResource;
@@ -38,12 +38,6 @@ class ShopifyController extends Controller
         return ShopifyProductResource::make($product)->response();
     }
 
-    /*public function setCartItems(array $products): JsonResponse
-    {
-        $cartItems = $this->shopifyService->setCartItems();
-        return response()->json($cartItems);
-    }*/
-
     public function webhook(WebhookProductRequest $request): JsonResponse
     {
         if (! $this->validateWebhookSignature($request)) {
@@ -51,7 +45,7 @@ class ShopifyController extends Controller
         }
 
         ProcessWebhookProductJob::dispatch(
-            ProductDto::fromArray($request->safe()->toArray())
+            WebhookProductDto::fromArray($request->safe()->toArray())
         );
 
         return response()->json(['message' => 'Webhook received']);

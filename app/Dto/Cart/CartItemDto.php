@@ -7,9 +7,8 @@ namespace App\Dto\Cart;
 final class CartItemDto
 {
     public function __construct(
-        public int $productId,
         public int $quantity,
-        public int $variantId,
+        public int | string $variantId,
     ) {
     }
 
@@ -19,7 +18,6 @@ final class CartItemDto
     public static function fromArray(array $data): self
     {
         return new self(
-            productId: $data['productId'],
             quantity: $data['quantity'],
             variantId: $data['variantId'],
         );
