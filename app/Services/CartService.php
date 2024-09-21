@@ -13,6 +13,8 @@ use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Shopify\Exception\MissingArgumentException;
 
 readonly class CartService
@@ -64,7 +66,7 @@ readonly class CartService
      */
     public function update(CartItemDto $cartItem, Cart $cart, User $user): Cart
     {
-        app()->call(CheckCartItemVariantAvailability::class, ['cartItem' => $cartItem]);
+        App::call(CheckCartItemVariantAvailability::class, ['cartItem' => $cartItem]);
 
         if ($cart->status !== CartStatus::Pending) {
             throw new BadStatusCartException();
@@ -95,8 +97,6 @@ readonly class CartService
      */
     public function getCartCheckoutUrl(Cart $cart, User $user): string
     {
-        // TODO check items availability
-
         if ($user->id !== $cart->user_id) {
             throw new IncorrectUserIdCart();
         }
@@ -109,13 +109,22 @@ readonly class CartService
             throw new MissingArgumentException('Cart items are empty');
         }
 
-        return $this->shopifyService->generateCartCheckoutUrl(
-            $cart->cartItems->map(static fn (CartItem $cartItem) =>
-                new CartItemDto(
-                    quantity: $cartItem->quantity,
-                    variantId: $cartItem->productVariant->shopify_gid,
-                )
-            )->toArray()
+        /** @var Collection<int,CartItem> $cartiItemsDto */
+        $cartItemsDto = $cart->cartItems->map(static fn (CartItem $cartItem) =>
+            new CartItemDto(
+                quantity: $cartItem->quantity,
+                variantId: $cartItem->product_variant_id
+            )
         );
+
+        // Check cart Item availability
+        $cartItemsDto->each(
+            static fn (CartItemDto $cartItemDto) => App::call(
+                CheckCartItemVariantAvailability::class,
+                ['cartItem' => $cartItemDto]
+            )
+        );
+
+        return $this->shopifyService->generateCartCheckoutUrl($cartItemsDto->toArray());
     }
 }
