@@ -8,6 +8,7 @@ use App\Exceptions\Cart\ActivePendingCartException;
 use App\Exceptions\Cart\BadStatusCartException;
 use App\Exceptions\Cart\IncorrectUserIdCart;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\CartService;
@@ -26,6 +27,7 @@ class CartServiceTest extends TestCase
     private CartService $cartService;
     private Cart $cart;
     private User $user;
+    private Product $product;
 
     protected function setUp(): void
     {
@@ -38,6 +40,8 @@ class CartServiceTest extends TestCase
             ->forUser($this->user->id)
             ->withCartStatusPending()
             ->createOne();
+
+        $this->product = ProductFactory::new()->createOne();
     }
 
     #[TestDox(
@@ -105,21 +109,18 @@ class CartServiceTest extends TestCase
     )]
     public function testShouldUpdateCart(): void
     {
-        $product = ProductFactory::new()->createOne();
-
         /** @var ProductVariant $productVariant */
         $productVariant = ProductVariantFactory::new()
-            ->forProduct($product->id)
+            ->forProduct($this->product->id)
             ->createOne();
 
         $cartItemDto = new CartItemDto(
-            productId: $product->id,
             quantity: 2,
             variantId: $productVariant->id,
         );
 
         $updatedCart = $this->cartService->update(
-            [$cartItemDto],
+            $cartItemDto,
             $this->cart,
             $this->user
         );
@@ -144,7 +145,17 @@ class CartServiceTest extends TestCase
 
         $this->expectException(BadStatusCartException::class);
 
-        $this->cartService->update([], $this->cart, $this->user);
+        /** @var ProductVariant $productVariant */
+        $productVariant = ProductVariantFactory::new()
+            ->forProduct($this->product->id)
+            ->createOne();
+
+        $cartItemDto = new CartItemDto(
+            quantity: 2,
+            variantId: $productVariant->id,
+        );
+
+        $this->cartService->update($cartItemDto, $this->cart, $this->user);
     }
 
     #[TestDox(
@@ -158,6 +169,16 @@ class CartServiceTest extends TestCase
 
         $this->expectException(IncorrectUserIdCart::class);
 
-        $this->cartService->update([], $this->cart, $otherUser);
+        /** @var ProductVariant $productVariant */
+        $productVariant = ProductVariantFactory::new()
+            ->forProduct($this->product->id)
+            ->createOne();
+
+        $cartItemDto = new CartItemDto(
+            quantity: 2,
+            variantId: $productVariant->id,
+        );
+
+        $this->cartService->update($cartItemDto, $this->cart, $otherUser);
     }
 }
