@@ -21,8 +21,7 @@ readonly class CartService
 {
     public function __construct(
         public ShopifyService $shopifyService
-    ) {
-    }
+    ) {}
 
     public function show(User $user): ?Cart
     {
@@ -48,7 +47,7 @@ readonly class CartService
             ->first();
 
         if ($existingPendingCart instanceof Cart) {
-            throw new ActivePendingCartException();
+            throw new ActivePendingCartException;
         }
 
         /** @var Cart $cart */
@@ -69,11 +68,11 @@ readonly class CartService
         App::call(CheckCartItemVariantAvailability::class, ['cartItem' => $cartItem]);
 
         if ($cart->status !== CartStatus::Pending) {
-            throw new BadStatusCartException();
+            throw new BadStatusCartException;
         }
 
         if ($user->id !== $cart->user_id) {
-            throw new IncorrectUserIdCart();
+            throw new IncorrectUserIdCart;
         }
 
         $cart->cartItems()
@@ -83,8 +82,7 @@ readonly class CartService
             ], [
                 'quantity' => $cartItem->quantity,
                 'image_url' => $cartItem->imageUrl,
-            ]
-            );
+            ]);
 
         return $cart;
     }
@@ -102,11 +100,11 @@ readonly class CartService
     public function getCartCheckoutUrl(Cart $cart, User $user): string
     {
         if ($user->id !== $cart->user_id) {
-            throw new IncorrectUserIdCart();
+            throw new IncorrectUserIdCart;
         }
 
         if ($cart->status !== CartStatus::Pending) {
-            throw new BadStatusCartException();
+            throw new BadStatusCartException;
         }
 
         if ($cart->cartItems->isEmpty()) {
@@ -114,12 +112,11 @@ readonly class CartService
         }
 
         /** @var Collection<int,CartItem> $cartiItemsDto */
-        $cartItemsDto = $cart->cartItems->map(static fn (CartItem $cartItem) =>
-            new CartItemDto(
-                quantity: $cartItem->quantity,
-                variantId: $cartItem->product_variant_id,
-                imageUrl: $cartItem->image_url
-            )
+        $cartItemsDto = $cart->cartItems->map(static fn (CartItem $cartItem) => new CartItemDto(
+            quantity: $cartItem->quantity,
+            variantId: $cartItem->product_variant_id,
+            imageUrl: $cartItem->image_url
+        )
         );
 
         // Check cart Item availability
