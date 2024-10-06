@@ -6,7 +6,7 @@ use App\Dto\Cart\CartItemDto;
 use App\Exceptions\Cart\ActivePendingCartException;
 use App\Exceptions\Cart\BadStatusCartException;
 use App\Exceptions\Cart\IncorrectUserIdCart;
-use App\Http\Requests\CreateCartRequest;
+use App\Http\Requests\StoreCartItemRequest;
 use App\Http\Resources\Cart\CartResource;
 use App\Models\Cart;
 use App\Services\CartService;
@@ -46,7 +46,7 @@ class CartController extends Controller
      * @throws BadStatusCartException
      * @throws IncorrectUserIdCart
      */
-    public function update(Cart $cart, CreateCartRequest $request): JsonResource
+    public function update(StoreCartItemRequest $request, Cart $cart ): JsonResource
     {
         $cart = $this->cartService->update(
             CartItemDto::fromArray($request->safe()->toArray()),

@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('', [CartController::class, 'store']);
         Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])
             ->whereNumber('cart');
-        Route::patch('{cart}', [CartController::class, 'update'])
+        Route::put('{cart}', [CartController::class, 'update'])
             ->whereNumber('cart');
         Route::delete('{cart}/cart-item/{cartItemId}', [CartController::class, 'destroy']);
     });

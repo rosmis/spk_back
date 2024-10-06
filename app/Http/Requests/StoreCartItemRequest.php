@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCartRequest extends FormRequest
+class StoreCartItemRequest extends FormRequest
 {
     /**
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -14,6 +14,7 @@ class CreateCartRequest extends FormRequest
         return [
             'quantity' => 'required|integer|min:1',
             'variantId' => 'required|integer|exists:product_variants,id',
+            'imageUrl' => 'required|string'
         ];
     }
 
@@ -29,6 +30,7 @@ class CreateCartRequest extends FormRequest
             'variantId.required' => 'The variantId field is required.',
             'variantId.integer' => 'The variantId field must be an integer.',
             'variantId.exists' => 'The selected variantId is invalid.',
+            'imageUrl.required' => 'The imageUrl field is required.',
         ];
     }
 }

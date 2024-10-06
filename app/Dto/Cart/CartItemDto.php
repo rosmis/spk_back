@@ -9,6 +9,7 @@ final class CartItemDto
     public function __construct(
         public int $quantity,
         public int | string $variantId,
+        public string $imageUrl,
     ) {
     }
 
@@ -20,6 +21,7 @@ final class CartItemDto
         return new self(
             quantity: $data['quantity'],
             variantId: $data['variantId'],
+            imageUrl: $data['imageUrl'],
         );
     }
 }

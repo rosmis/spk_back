@@ -76,11 +76,15 @@ readonly class CartService
             throw new IncorrectUserIdCart();
         }
 
-        $cart->cartItems()->updateOrCreate([
-            'product_variant_id' => $cartItem->variantId,
-        ], [
-            'quantity' => $cartItem->quantity,
-        ]);
+        $cart->cartItems()
+            ->with('productVariant')
+            ->updateOrCreate([
+                'product_variant_id' => $cartItem->variantId,
+            ], [
+                'quantity' => $cartItem->quantity,
+                'image_url' => $cartItem->imageUrl,
+            ]
+            );
 
         return $cart;
     }
@@ -113,7 +117,8 @@ readonly class CartService
         $cartItemsDto = $cart->cartItems->map(static fn (CartItem $cartItem) =>
             new CartItemDto(
                 quantity: $cartItem->quantity,
-                variantId: $cartItem->product_variant_id
+                variantId: $cartItem->product_variant_id,
+                imageUrl: $cartItem->image_url
             )
         );
 

@@ -15,9 +15,14 @@ class CartItemResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'imageUrl' => $this->resource->image_url,
             'variant' => $this->whenLoaded(
                 'productVariant',
-                fn () => $this->resource->productVariant->only('id', 'title', 'price')
+                fn () => [
+                    'id' => $this->resource->productVariant->id,
+                    'title' => $this->resource->productVariant->title,
+                    'price' => $this->resource->productVariant->price,
+                ]
             ),
             'quantity' => $this->resource->quantity,
         ];

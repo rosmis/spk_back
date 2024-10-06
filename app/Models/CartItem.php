@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $cart_id
  * @property int $product_variant_id
  * @property int $quantity
+ * @property string $image_url
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
