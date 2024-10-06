@@ -76,13 +76,14 @@ readonly class CartService
         }
 
         $cart->cartItems()
-            ->with('productVariant')
             ->updateOrCreate([
                 'product_variant_id' => $cartItem->variantId,
             ], [
                 'quantity' => $cartItem->quantity,
                 'image_url' => $cartItem->imageUrl,
             ]);
+
+        $cart->load('cartItems.productVariant');
 
         return $cart;
     }

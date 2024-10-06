@@ -18,7 +18,7 @@ class ProductVariantResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'price' => $this->price,
-            'quantityAvailable' => $this->quantityAvailable,
+            'quantityAvailable' => $this->quantity_available,
         ];
     }
 }
