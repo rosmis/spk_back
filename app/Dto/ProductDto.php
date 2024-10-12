@@ -26,17 +26,17 @@ final class ProductDto
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['admin_graphql_api_id'],
+            id: $data['id'],
             title: $data['title'],
             handle: $data['handle'],
-            description: $data['body_html'],
+            description: $data['description'],
             variants: array_map(
                 fn (array $variant) => ProductVariantDto::fromArray($variant),
-                $data['variants']
+                $data['variants']['edges']
             ),
             images: array_map(
                 fn (array $image) => ProductImageDto::fromArray($image),
-                $data['images']
+                $data['media']['edges']
             )
         );
     }

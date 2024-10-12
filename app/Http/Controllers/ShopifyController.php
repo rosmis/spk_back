@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Dto\ProductDto;
+use App\Dto\Webhook\WebhookProductDto;
 use App\Exceptions\InvalidWebhookSignatureException;
 use App\Http\Requests\WebhookProductRequest;
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\Shopify\ShopifyProductResource;
 use App\Jobs\ProcessWebhookProductJob;
-use App\Traits\ValidateWebhookSignature;
 use App\Services\ShopifyService;
+use App\Traits\ValidateWebhookSignature;
 use Illuminate\Http\JsonResponse;
 
 class ShopifyController extends Controller
@@ -24,7 +24,7 @@ class ShopifyController extends Controller
 
     public function index(): JsonResponse
     {
-        return ProductResource::collection(
+        return ShopifyProductResource::collection(
             $this->shopifyService->fetchProduts()
         )->response();
     }
@@ -35,7 +35,7 @@ class ShopifyController extends Controller
             ->shopifyService
             ->fetchProductByHandle($handle);
 
-        return ProductResource::make($product)->response();
+        return ShopifyProductResource::make($product)->response();
     }
 
     public function webhook(WebhookProductRequest $request): JsonResponse
@@ -45,7 +45,7 @@ class ShopifyController extends Controller
         }
 
         ProcessWebhookProductJob::dispatch(
-            ProductDto::fromArray($request->safe()->toArray())
+            WebhookProductDto::fromArray($request->safe()->toArray())
         );
 
         return response()->json(['message' => 'Webhook received']);

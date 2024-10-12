@@ -9,14 +9,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 readonly class ProductService
 {
-    public function __construct(
-    ) {
-    }
-
-    public function index(): LengthAwarePaginator
+    public function list(): LengthAwarePaginator
     {
         return Product::query()
-            ->with(['images'])
+            ->with(['images', 'variants'])
             ->paginate(9);
     }
 
@@ -25,7 +21,7 @@ readonly class ProductService
         /** @var Product $product */
         $product = Product::query()
             ->where('handle', $handle)
-            ->with(['images'])
+            ->with(['images', 'variants'])
             ->firstOrFail();
 
         return $product;

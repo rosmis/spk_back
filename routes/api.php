@@ -3,14 +3,32 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ShopifyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', function (Request $request) {
+        return $request->user();
+    });
 
-Route::prefix('products')->group(function () {
-    Route::get('', [ProductController::class, 'index']);
-    Route::get('{handle}', [ProductController::class, 'show']);
+    Route::prefix('products')->group(function () {
+        Route::get('', [ProductController::class, 'index']);
+        Route::get('{handle}', [ProductController::class, 'show']);
+    });
+
+    Route::prefix('cart')->group(function () {
+        Route::get('', [CartController::class, 'index']);
+        Route::post('', [CartController::class, 'store']);
+        Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])
+            ->whereNumber('cart');
+        Route::put('{cart}', [CartController::class, 'update'])
+            ->whereNumber('cart');
+        Route::delete('{cart}/cart-item/{cartItemId}', [CartController::class, 'destroy']);
+    });
+
+//    Route::prefix('shopify')->group(function () {
+//        Route::get('{handle}', [ShopifyController::class, 'show']);
+//    });
 });

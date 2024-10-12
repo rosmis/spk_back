@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\Product\ProductResource;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         return ProductResource::collection(
-            $this->productService->index()
+            $this->productService->list()
         )->response();
     }
 
