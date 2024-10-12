@@ -28,11 +28,8 @@ jobs:
             --file ./docker/8.3/Dockerfile \
             --no-cache \
             --progress=plain \
+            --push \
             .
-
-      - name: Push Docker image to GHCR
-        run: |
-          docker push ghcr.io/${{ github.repository }}/spk_api:dev
 
       - name: Verify image push
         run: |
