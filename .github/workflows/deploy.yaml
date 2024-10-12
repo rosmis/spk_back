@@ -2,8 +2,7 @@ name: Deploy Laravel Docker Image
 
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
 
 jobs:
   build:
