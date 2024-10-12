@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Docker image with Buildx
         run: |
-          docker buildx build -t spk_api:dev \
+          docker buildx build -t ghcr.io/${{ github.repository }}/spk_api:dev \
             --file ./docker/8.3/Dockerfile \
             --no-cache \
             --progress=plain \
