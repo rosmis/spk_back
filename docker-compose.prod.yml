@@ -37,7 +37,7 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
-            - './.env:/var/www/html/.env:ro'
+            - './.env:/var/www/html/.env'
         env_file:
             - ./.env
         networks:
