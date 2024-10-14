@@ -1,51 +1,36 @@
 #!/usr/bin/env bash
 
-echo "Starting container initialization..."
-
-# Function to log with timestamp
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
-log "Running initialization tasks..."
-
-# Ensure .env file is present
-if [ ! -f /var/www/html/.env ]; then
-    log "Error: .env file not found at /var/www/html/.env"
-    exit 1
-fi
-
-log "Setting correct permissions for storage and cache directories..."
-chown -R 1000:1000 /var/www/html/storage/
-chmod -R 775 /var/www/html/storage/
-chown -R 1000:1000 /var/www/html/bootstrap/cache/
-
-log "Running Laravel commands..."
-php artisan config:clear
-php artisan key:generate
-php artisan migrate --force
+log "Starting container initialization..."
 
 if [ "$SUPERVISOR_PHP_USER" != "root" ] && [ "$SUPERVISOR_PHP_USER" != "sail" ]; then
-    echo "You should set SUPERVISOR_PHP_USER to either 'sail' or 'root'."
+    log "Error: SUPERVISOR_PHP_USER should be set to either 'sail' or 'root'."
     exit 1
 fi
 
 if [ ! -z "$WWWUSER" ]; then
+    log "Updating sail user ID to $WWWUSER"
     usermod -u $WWWUSER sail
 fi
 
 if [ ! -d /.composer ]; then
+    log "Creating .composer directory"
     mkdir /.composer
 fi
 
+log "Setting permissions for .composer directory"
 chmod -R ugo+rw /.composer
 
-if [ $# -gt 0 ]; then
-    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
-        exec "$@"
-    else
-        exec gosu $WWWUSER "$@"
-    fi
-else
-    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-fi
+# Start supervisord
+log "Starting supervisord"
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
+
+# Run the initialization script in the background
+log "Running initialization script"
+/usr/local/bin/initialize-app.sh &
+
+# Keep the container running
+tail -f /dev/null

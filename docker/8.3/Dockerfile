@@ -58,9 +58,10 @@ RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 COPY ./docker/8.3/start-container /usr/local/bin/start-container
 COPY ./docker/8.3/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./docker/8.3/php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
+COPY ./docker/8.3/initialize-app.sh /usr/local/bin/initialize-app.sh
 COPY . /var/www/html/
 
-RUN chmod +x /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/start-container /usr/local/bin/initialize-app.sh
 RUN composer install
 
 EXPOSE 8000
