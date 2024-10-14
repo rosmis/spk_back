@@ -59,6 +59,12 @@ COPY ./docker/8.3/start-container /usr/local/bin/start-container
 COPY ./docker/8.3/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./docker/8.3/php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
 COPY . /var/www/html/
+# Copy the post-deploy.sh script into the image
+COPY ./post-deploy.sh /usr/local/bin/post-deploy.sh
+
+# Make the script executable
+RUN chmod +x /usr/local/bin/post-deploy.sh
+
 RUN chmod +x /usr/local/bin/start-container
 RUN composer install
 
