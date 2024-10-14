@@ -46,7 +46,6 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
-        command: [ "/bin/sh", "-c", "/usr/local/bin/post-deploy.sh" ]
 
     mysql:
         image: 'mysql/mysql-server:8.0'
