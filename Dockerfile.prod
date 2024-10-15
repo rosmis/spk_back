@@ -1,5 +1,5 @@
 # Use the FrankenPHP image as the base
-FROM dunglas/frankenphp:php8.3-bookworm AS app
+FROM dunglas/frankenphp:php8.3-alpine AS app
 
 ENV SERVER_NAME=admin.scarpackage.com
 
