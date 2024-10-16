@@ -1,0 +1,44 @@
+FROM dunglas/frankenphp:php8.3-bookworm
+
+# Install production dependencies
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    librabbitmq-dev \
+    libpq-dev \
+    supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN install-php-extensions \
+    gd \
+    pcntl \
+    opcache \
+    pdo \
+    pdo_mysql
+
+# Copy Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Copy Laravel files and custom configurations
+COPY . .
+COPY ./.docker/php.ini /usr/local/etc/php/
+COPY ./.docker/prod/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./.docker/entrypoint.sh /entrypoint.sh
+
+COPY ./.docker/prod/Caddyfile /etc/caddy/Caddyfile
+
+# Install production dependencies
+RUN composer install --optimize-autoloader --no-dev
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80 443 2019
+
+ENTRYPOINT ["/entrypoint.sh"]

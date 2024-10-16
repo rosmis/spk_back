@@ -1,3 +1,0 @@
-FROM dunglas/frankenphp:php8.3-bookworm
-
-RUN docker-php-ext-instkall pdo pdo_mysql

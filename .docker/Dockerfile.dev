@@ -1,0 +1,46 @@
+FROM dunglas/frankenphp:php8.3-bookworm
+
+# Set Caddy server name to "http://" to serve on 80 and not 443
+# Read more: https://frankenphp.dev/docs/config/#environment-variables
+ENV SERVER_NAME=":80"
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    librabbitmq-dev \
+    libpq-dev \
+    supervisor
+
+RUN install-php-extensions \
+    gd \
+    pcntl \
+    opcache \
+    pdo \
+    pdo_mysql
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Copy the Laravel application files into the container.
+COPY . .
+
+# Start with base PHP config, then add extensions.
+COPY ./.docker/php.ini /usr/local/etc/php/
+COPY ./.docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./.docker/entrypoint.sh /entrypoint.sh
+
+COPY ./.docker/Caddyfile /etc/caddy/Caddyfile
+
+# Install Laravel dependencies using Composer.
+RUN composer install
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/entrypoint.sh"]
