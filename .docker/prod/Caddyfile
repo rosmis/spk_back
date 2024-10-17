@@ -1,4 +1,5 @@
 {
+    email rosmis123@gmail.com
     admin off
     frankenphp
 }
@@ -6,15 +7,16 @@
 admin.scarpackage.com {
     root * /var/www/html/public
     php_server
+    encode gzip
+    tls {
+        protocols tls1.2 tls1.3
+    }
 }
 
 pma.scarpackage.com {
-    reverse_proxy phpmyadmin:80 
+    reverse_proxy phpmyadmin:80
     encode gzip
-    log {
-        output file /var/log/caddy/pma.access.log
-    }
     tls {
-        # Automatic TLS management for phpMyAdmin
+        protocols tls1.2 tls1.3
     }
 }
