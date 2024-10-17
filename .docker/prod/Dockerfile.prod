@@ -38,6 +38,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 80 443
+EXPOSE 80 443 2019
 
 ENTRYPOINT ["/entrypoint.sh"]
