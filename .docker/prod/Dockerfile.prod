@@ -33,11 +33,19 @@ COPY ./.docker/prod/Caddyfile /etc/caddy/Caddyfile
 # Install production dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# Set permissions
+# Set permissions and create necessary directories
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-RUN chmod +x /entrypoint.sh
+    && chmod -R 755 /var/www/html/storage \
+    && chmod +x /entrypoint.sh \
+    && mkdir -p /data/caddy/pki \
+    && chown -R www-data:www-data /data/caddy
+
+# Create directory for Supervisor socket
+RUN mkdir -p /var/run/supervisor \
+    && chown www-data:www-data /var/run/supervisor
 
 EXPOSE 80 443 2019
+
+USER www-data
 
 ENTRYPOINT ["/entrypoint.sh"]
