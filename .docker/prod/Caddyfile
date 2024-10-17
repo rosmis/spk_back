@@ -1,17 +1,13 @@
-# Handle Laravel application requests
-admin.scarpackage.com {
-    reverse_proxy web:80
-    encode gzip
-    log {
-        output file /var/log/caddy/admin.access.log
-    }
-    tls {
-        # Automatic TLS management with Let's Encrypt
-        # Optional: configure DNS challenge if behind Cloudflare
-    }
+{
+    admin off
+    frankenphp
 }
 
-# Handle phpMyAdmin requests
+admin.scarpackage.com {
+    root * /var/www/html/public
+    php_server
+}
+
 pma.scarpackage.com {
     reverse_proxy phpmyadmin:80 
     encode gzip
