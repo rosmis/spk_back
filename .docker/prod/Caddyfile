@@ -6,11 +6,8 @@
 
 admin.scarpackage.com {
     root * /var/www/html/public
-    php_server
     encode gzip
-    tls {
-        protocols tls1.2 tls1.3
-    }
+    php_server
 }
 
 pma.scarpackage.com {
