@@ -6,14 +6,32 @@ services:
         volumes:
             - './.env:/var/www/html/.env'
             - .:/app
+            - caddy_data:/data
+            - caddy_config:/config
+        tty: true
         ports:
             - '80:80'
+            - "443:443"
+            - "443:443/udp"
         networks:
             - laravel_network
         depends_on:
           db:
               condition: service_healthy
-        entrypoint: ["/entrypoint.sh"]
+    queue:
+        build:
+            context: ./
+            dockerfile: ./.docker/Dockerfile.dev
+        volumes:
+            - './.env:/var/www/html/.env'
+            - .:/app
+        networks:
+            - laravel_network
+        depends_on:
+          web:
+              condition: service_healthy
+        tty: true
+        entrypoint: ["/queue-entrypoint.sh"]
     db:
         image: mysql/mysql-server:8.0
         ports:
@@ -35,22 +53,11 @@ services:
                 - -p${DB_PASSWORD}
             retries: 3
             timeout: 5s
-
-    phpmyadmin:
-        image: phpmyadmin:latest
-        ports:
-            - '8080:80'
-        environment:
-            PMA_HOST: db
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-        depends_on:
-            db:
-                condition: service_healthy
-        networks:
-            - laravel_network
 networks:
     laravel_network:
         driver: bridge
 
 volumes:
     sail-mysql:
+    caddy_data:
+    caddy_config:

@@ -10,5 +10,4 @@ done
 # Run migrations
 php artisan migrate --force
 
-# Start Supervisor
-exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
+exec docker-php-entrypoint "$@"

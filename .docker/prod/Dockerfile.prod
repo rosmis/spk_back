@@ -23,7 +23,7 @@ RUN install-php-extensions \
 # Copy Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy Laravel files and custom configurations
 COPY . .
@@ -36,10 +36,11 @@ COPY ./.docker/prod/Caddyfile /etc/caddy/Caddyfile
 RUN composer install --optimize-autoloader --no-dev
 
 # Set permissions and create necessary directories
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+RUN chown -R www-data:www-data /app \
+    && chmod -R 755 /app/storage
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 80 443 2019
+EXPOSE 80 443
 
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
