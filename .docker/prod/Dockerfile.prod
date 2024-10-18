@@ -29,6 +29,7 @@ WORKDIR /app
 COPY . .
 COPY ./.docker/php.ini /usr/local/etc/php/
 COPY ./.docker/entrypoint.sh /entrypoint.sh
+COPY ./.docker/queue-entrypoint.sh /queue-entrypoint.sh
 
 # Install production dependencies
 RUN composer install --optimize-autoloader --no-dev
@@ -36,7 +37,9 @@ RUN composer install --optimize-autoloader --no-dev
 # Set permissions and create necessary directories
 RUN chown -R www-data:www-data /app \
     && chmod -R 755 /app/storage
+
 RUN chmod +x /entrypoint.sh
+RUN chmod +x /queue-entrypoint.sh
 
 EXPOSE 80 443
 

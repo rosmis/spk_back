@@ -15,6 +15,17 @@ services:
         depends_on:
           db:
               condition: service_healthy
+    queue:
+        image: ghcr.io/rosmis/spk_back/spk_api:dev
+        volumes:
+            - './.env:/app/.env'
+        networks:
+            - laravel_network
+        depends_on:
+          web:
+              condition: service_healthy
+        tty: true
+        entrypoint: ["/queue-entrypoint.sh"]
     db:
         image: mysql/mysql-server:8.0
         ports:
