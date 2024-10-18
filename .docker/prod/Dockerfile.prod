@@ -1,6 +1,6 @@
 FROM dunglas/frankenphp:php8.3-bookworm
 
-ENV SERVER_NAME=admin.scarpackage.com
+ENV SERVER_NAME=api.scarpackage.com
 
 # Install production dependencies
 RUN apt-get update \
