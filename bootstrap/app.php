@@ -15,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
 
         $middleware->validateCsrfTokens(except: [
-            'webhook/product'
+            'webhook/product',
+            'webhook/order',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

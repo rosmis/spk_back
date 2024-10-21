@@ -112,13 +112,16 @@ readonly class CartService
             throw new MissingArgumentException('Cart items are empty');
         }
 
-        /** @var Collection<int,CartItem> $cartiItemsDto */
-        $cartItemsDto = $cart->cartItems->map(static fn (CartItem $cartItem) => new CartItemDto(
-            quantity: $cartItem->quantity,
-            variantId: $cartItem->product_variant_id,
-            imageUrl: $cartItem->image_url
-        )
-        );
+        /** @var Collection<int,CartItemDto> $cartiItemsDto */
+        $cartItemsDto = $cart->cartItems
+            ->map(
+                static fn (CartItem $cartItem): CartItemDto => new CartItemDto(
+                    quantity: $cartItem->quantity,
+                    variantId: $cartItem->product_variant_id,
+                    imageUrl: $cartItem->image_url,
+                    shopifyGid: $cartItem->productVariant->shopify_gid,
+                )
+            );
 
         // Check cart Item availability
         $cartItemsDto->each(
@@ -128,6 +131,6 @@ readonly class CartService
             )
         );
 
-        return $this->shopifyService->generateCartCheckoutUrl($cartItemsDto->toArray());
+        return $this->shopifyService->generateCartCheckoutUrl($cartItemsDto, $user);
     }
 }

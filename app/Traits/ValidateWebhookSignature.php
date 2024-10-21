@@ -10,6 +10,7 @@ trait ValidateWebhookSignature
 {
     public function validateWebhookSignature(Request $request): bool
     {
+        /** @var string $webhookSecret */
         $webhookSecret = config('shopify.webhookSecret');
         $hmacHeader = $request->header('X-Shopify-Hmac-Sha256');
 

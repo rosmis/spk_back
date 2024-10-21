@@ -18,20 +18,20 @@ services:
         depends_on:
           db:
               condition: service_healthy
-    queue:
-        build:
-            context: ./
-            dockerfile: ./.docker/Dockerfile.dev
-        volumes:
-            - './.env:/var/www/html/.env'
-            - .:/app
-        networks:
-            - laravel_network
-        depends_on:
-          web:
-              condition: service_healthy
-        tty: true
-        entrypoint: ["/queue-entrypoint.sh"]
+#    queue:
+#        build:
+#            context: ./
+#            dockerfile: ./.docker/Dockerfile.dev
+#        volumes:
+#            - './.env:/var/www/html/.env'
+#            - .:/app
+#        networks:
+#            - laravel_network
+#        depends_on:
+#          web:
+#              condition: service_healthy
+#        tty: true
+#        entrypoint: ["/queue-entrypoint.sh"]
     db:
         image: mysql/mysql-server:8.0
         ports:

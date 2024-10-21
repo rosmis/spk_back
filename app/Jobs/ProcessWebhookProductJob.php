@@ -9,8 +9,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessWebhookProductJob implements ShouldQueue
 {
@@ -23,8 +25,7 @@ class ProcessWebhookProductJob implements ShouldQueue
      */
     public function __construct(
         WebhookProductDto $productDto
-    )
-    {
+    ) {
         $this->productDto = $productDto;
     }
 
@@ -35,7 +36,7 @@ class ProcessWebhookProductJob implements ShouldQueue
     {
         try {
             DB::transaction(function () {
-                /** @var  Product $product */
+                /** @var Product $product */
                 $product = Product::query()
                     ->updateOrCreate(
                         ['shopify_gid' => $this->productDto->id],
@@ -57,6 +58,15 @@ class ProcessWebhookProductJob implements ShouldQueue
                     );
                 }
 
+                // delete all variants that are not in the productvariants dto
+                $product->variants()
+                    ->whereNotIn(
+                        'shopify_gid',
+                        Collection::make($this->productDto->variants)
+                            ->pluck('id')
+                    )
+                    ->delete();
+
                 foreach ($this->productDto->images as $image) {
                     $product->images()->updateOrCreate(
                         ['shopify_gid' => $image->id],
@@ -67,9 +77,19 @@ class ProcessWebhookProductJob implements ShouldQueue
                     );
                 }
 
+                // delete all images that are not in the productvariants dto
+
+                $product->images()
+                    ->whereNotIn(
+                        'shopify_gid',
+                        Collection::make($this->productDto->images)
+                            ->pluck('id')
+                    )
+                    ->delete();
+
                 Log::info('ALL created/updated', ['product' => $product->toArray()]);
             });
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Error processing webhook product', ['error' => $e->getMessage()]);
         }
     }

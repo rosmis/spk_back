@@ -13,6 +13,7 @@ use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Shopify\Exception\MissingArgumentException;
 
 class CartController extends Controller
 {
@@ -63,6 +64,10 @@ class CartController extends Controller
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @throws IncorrectUserIdCart
+     * @throws MissingArgumentException
+     */
     public function getCartCheckoutUrl(Cart $cart, Request $request): JsonResponse
     {
         $cartCheckoutUrl = $this->cartService->getCartCheckoutUrl(

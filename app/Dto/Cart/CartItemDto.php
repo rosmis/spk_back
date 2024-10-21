@@ -10,6 +10,7 @@ final class CartItemDto
         public int $quantity,
         public int | string $variantId,
         public string $imageUrl,
+        public ?string $shopifyGid = null,
     ) {
     }
 

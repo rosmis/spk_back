@@ -8,10 +8,11 @@ use App\Contracts\ShopifyInterface;
 use App\Dto\Cart\CartItemDto;
 use App\Dto\ProductDto;
 use App\Factories\StoreFrontFactory;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Shopify\Clients\Storefront;
-use Shopify\Context;
 use Shopify\Exception\MissingArgumentException;
 
 readonly class ShopifyService implements ShopifyInterface
@@ -143,21 +144,31 @@ readonly class ShopifyService implements ShopifyInterface
     }
 
     /**
-     * @param array<int,CartItemDto> $cartItems
+     * @param  Collection<int,CartItemDto>  $cartItems
+     *
      * @throws MissingArgumentException
      * @throws Exception
      */
-    public function generateCartCheckoutUrl(array $cartItems): string
+    public function generateCartCheckoutUrl(Collection $cartItems, User $user): string
     {
-        $lineItemsString = implode(', ', array_map(function ($lineItem) {
-            return "{merchandiseId: \"{$lineItem->variantId}\", quantity: {$lineItem->quantity}}";
-        }, $cartItems));
+        $lineItemsString = $cartItems->map(
+            fn (CartItemDto $cartItem) => $this->toLineItemString($cartItem)
+        )->implode(',');
 
         $queryString = <<<QUERY
             mutation {
               cartCreate(
                 input: {
-                  lines: $lineItemsString
+                  lines: [{$lineItemsString}]
+                  buyerIdentity: {
+                    email: "{$user->email}"
+                  }
+                  attributes: [
+                    {
+                      key: "user_id",
+                      value: "{$user->id}"
+                    }
+                  ]
                 }
               ) {
                 cart {
@@ -168,7 +179,6 @@ readonly class ShopifyService implements ShopifyInterface
             }
         QUERY;
 
-
         try {
             $response = $this->storefrontClient->query(data: $queryString);
 
@@ -178,5 +188,10 @@ readonly class ShopifyService implements ShopifyInterface
         } catch (Exception $e) {
             throw new Exception('Failed to create checkout: ' . $e->getMessage());
         }
+    }
+
+    private function toLineItemString(CartItemDto $cartItemDto): string
+    {
+        return "{merchandiseId: \"{$cartItemDto->shopifyGid}\", quantity: {$cartItemDto->quantity}}";
     }
 }

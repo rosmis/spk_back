@@ -19,10 +19,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('cart')->group(function () {
-        Route::get('', [CartController::class, 'index']);
-        Route::post('', [CartController::class, 'store']);
         Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])
             ->whereNumber('cart');
+        Route::get('', [CartController::class, 'index']);
+        Route::post('', [CartController::class, 'store']);
         Route::put('{cart}', [CartController::class, 'update'])
             ->whereNumber('cart');
         Route::delete('{cart}/cart-item/{cartItemId}', [CartController::class, 'destroy']);
