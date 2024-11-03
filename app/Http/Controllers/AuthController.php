@@ -9,7 +9,6 @@ use App\Exceptions\Auth\EmailNotVerifiedException;
 use App\Exceptions\Auth\OtpExpiredException;
 use App\Exceptions\Auth\OtpInvalidException;
 use App\Http\Requests\UserRegisterRequest;
-use App\Models\User;
 use App\Services\AuthService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -95,27 +94,8 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        /**
-         * @var ?User $user
-         */
-        $user = User::query()
-            ->where('email', $credentials['email'])
-            ->first();
+        $this->authService->resendOtp($credentials['email']);
 
-        if ($user && $user->email_verification_code_expiry->isPast()) {
-            $otp = rand(100000, 999999);
-            $user->email_verification_code = $otp;
-            $user->email_verification_code_expiry = now()->addMinutes(5);
-
-            $user->save();
-
-            $this->authService->sendOtp($user->email, $otp);
-
-            return response()
-                ->json('OTP sent', JsonResponse::HTTP_OK);
-        }
-
-        return response()
-            ->json('User not found', JsonResponse::HTTP_NOT_FOUND);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

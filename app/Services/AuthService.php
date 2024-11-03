@@ -33,6 +33,7 @@ readonly class AuthService
 
         if (! $user->email_verified_at) {
             if ($user->email_verification_code_expiry < Carbon::now()) {
+                $this->resendOtp($user->email);
                 throw new OtpExpiredException;
             } else {
                 throw new EmailNotVerifiedException;
@@ -104,6 +105,28 @@ readonly class AuthService
         Auth::login($user);
 
         return $user;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function resendOtp(string $email): void
+    {
+        /** @var User $user */
+        $user = User::query()
+            ->where('email', $email)
+            ->firstOrFail();
+
+        if ($user->email_verified_at) {
+            throw new Exception('Email already verified');
+        }
+
+        $user->email_verification_code = rand(100000, 999999);
+        $user->email_verification_code_expiry = Carbon::now()->addMinutes(5);
+
+        $user->save();
+
+        $this->sendOtp($user->email, $user->email_verification_code);
     }
 
     public function sendOtp(string $email, int $otp)
