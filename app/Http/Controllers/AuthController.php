@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Dto\User\UserLoginDto;
+use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
+use App\Exceptions\Auth\EmailNotVerifiedException;
+use App\Exceptions\Auth\OtpExpiredException;
+use App\Exceptions\Auth\OtpInvalidException;
 use App\Http\Requests\UserRegisterRequest;
 use App\Models\User;
 use App\Services\AuthService;
@@ -21,6 +25,8 @@ class AuthController extends Controller
 
     /**
      * @throws Exception
+     * @throws OtpExpiredException
+     * @throws EmailNotVerifiedException
      */
     public function login(Request $request): JsonResponse
     {
@@ -38,17 +44,6 @@ class AuthController extends Controller
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function logout(Request $request): JsonResponse
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-    }
-
     /**
      * @throws Exception
      */
@@ -62,40 +57,36 @@ class AuthController extends Controller
         return new JsonResponse($user, Response::HTTP_CREATED);
     }
 
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws Exception
+     * @throws OtpExpiredException
+     * @throws OtpInvalidException
+     */
     public function checkOtpValidity(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'otp' => ['required', 'integer'],
-        ]);
+        $otpData = UserOtpDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email', 'exists:users,email'],
+                'otp' => ['required', 'integer'],
+            ])
+        );
 
-        /**
-         * @var ?User $user
-         */
-        $user = User::query()
-            ->where('email', $request->string('email')->value)
-            ->where('email_verification_code', $request->integer('otp'))
-            ->first();
+        $user = $this->authService->checkOtpValidity($otpData);
 
-        if (! $user) {
-            throw new OtpInvalidException('Votre code OTP est invalide. Veuillez réessayer.');
-        }
-
-        if ($user->email_verification_code_expiry->isPast()) {
-            throw new OtpExpiredException('Votre code OTP a expiré. Veuillez en générer un nouveau.');
-        }
-
-        $user->email_verification_code = null;
-        $user->email_verification_code_expiry = null;
-        $user->email_verified_at = now();
-
-        $user->save();
-
-        Auth::login($user);
         $request->session()->regenerate();
 
-        return response()
-            ->json($user, JsonResponse::HTTP_OK);
+        return new JsonResponse($user, Response::HTTP_NO_CONTENT);
     }
 
     public function resendOtp(Request $request): JsonResponse

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Dto\User\UserLoginDto;
+use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
 use App\Exceptions\Auth\EmailNotVerifiedException;
 use App\Exceptions\Auth\OtpExpiredException;
+use App\Exceptions\Auth\OtpInvalidException;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
@@ -64,6 +66,42 @@ readonly class AuthService
             ]);
 
         $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
+
+        return $user;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function checkOtpValidity(UserOtpDto $userOtpDto): User
+    {
+        /**
+         * @var ?User $user
+         */
+        $user = User::query()
+            ->where('email', $userOtpDto->email)
+            ->where('email_verification_code', $userOtpDto->otp)
+            ->first();
+
+        if (! $user) {
+            throw new OtpInvalidException;
+        }
+
+        if ($user->email_verified_at instanceof Carbon) {
+            throw new Exception('Email already verified');
+        }
+
+        if ($user->email_verification_code_expiry->isPast()) {
+            throw new OtpExpiredException;
+        }
+
+        $user->email_verification_code = null;
+        $user->email_verification_code_expiry = null;
+        $user->email_verified_at = Carbon::now();
+
+        $user->save();
+
+        Auth::login($user);
 
         return $user;
     }
