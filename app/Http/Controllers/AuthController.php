@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\User\UserLoginDto;
 use App\Dto\User\UserRegisterDto;
 use App\Http\Requests\UserRegisterRequest;
 use App\Models\User;
@@ -18,34 +19,23 @@ class AuthController extends Controller
         public readonly AuthService $authService
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public function login(Request $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $userLoginData = UserLoginDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ])
+        );
 
-        /**
-         * @var User $user
-         */
-        $user = User::query()
-            ->where('email', $credentials['email'])
-            ->first();
-
-        /*if ($user->email_verification_code_expiry) {
-            return response()
-                ->json('Please verify your email address', JsonResponse::HTTP_FORBIDDEN);
-        }*/
-
-        if (! Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid login details',
-            ], JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        $this->authService->login($userLoginData);
 
         $request->session()->regenerate();
 
-        return response()->json(['message' => 'connected'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     public function logout(Request $request): JsonResponse
@@ -56,8 +46,7 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()
-            ->json('disconnected', JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -70,8 +59,7 @@ class AuthController extends Controller
             $request->user()
         );
 
-        return response()
-            ->json($user, JsonResponse::HTTP_CREATED);
+        return new JsonResponse($user, Response::HTTP_CREATED);
     }
 
     public function checkOtpValidity(Request $request): JsonResponse
