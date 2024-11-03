@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopifyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('{handle}', [ProductController::class, 'show']);
     });
 
+    Route::prefix('otp')->group(function () {
+        Route::post('verify', [AuthController::class, 'checkOtpValidity']);
+        Route::post('resend', [AuthController::class, 'resendOtp']);
+    });
+
     Route::prefix('cart')->group(function () {
         Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])
             ->whereNumber('cart');
@@ -28,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{cart}/cart-item/{cartItemId}', [CartController::class, 'destroy']);
     });
 
-//    Route::prefix('shopify')->group(function () {
-//        Route::get('{handle}', [ShopifyController::class, 'show']);
-//    });
+    //    Route::prefix('shopify')->group(function () {
+    //        Route::get('{handle}', [ShopifyController::class, 'show']);
+    //    });
 });
