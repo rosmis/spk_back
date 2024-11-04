@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use LogicException;
+use Illuminate\Validation\ValidationException;
 
-class OtpExpiredException extends LogicException
+class OtpExpiredException extends ValidationException
 {
     public function __construct($message = 'OTP has expired. Please enter the new OTP sent to your email: ')
     {

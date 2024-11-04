@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use LogicException;
+use Illuminate\Validation\ValidationException;
 
-class OtpInvalidException extends LogicException
+class OtpInvalidException extends ValidationException
 {
     public function __construct($message = 'Invalid OTP. Please enter the correct OTP: ')
     {

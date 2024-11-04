@@ -7,9 +7,13 @@ namespace App\Services;
 use App\Dto\User\UserLoginDto;
 use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
+use App\Exceptions\Auth\EmailAlreadyVerifiedException;
 use App\Exceptions\Auth\EmailNotVerifiedException;
+use App\Exceptions\Auth\InvalidLoginDetailsException;
 use App\Exceptions\Auth\OtpExpiredException;
 use App\Exceptions\Auth\OtpInvalidException;
+use App\Exceptions\Auth\UserAlreadyExistsException;
+use App\Exceptions\Auth\UserNotFoundException;
 use App\Mail\OtpConfirmationMail;
 use App\Models\User;
 use Exception;
@@ -31,7 +35,7 @@ readonly class AuthService
             ->first();
 
         if (! $user) {
-            throw new Exception('User not found, please register first');
+            throw new UserNotFoundException;
         }
 
         if (! $user->email_verified_at) {
@@ -44,7 +48,7 @@ readonly class AuthService
         }
 
         if (! Auth::attempt(UserLoginDto::toArray($userLoginDto))) {
-            throw new Exception('Invalid login details');
+            throw new InvalidLoginDetailsException;
         }
     }
 
@@ -56,7 +60,7 @@ readonly class AuthService
         ?User $user
     ): User {
         if ($user) {
-            throw new Exception('User already exists');
+            throw new UserAlreadyExistsException;
         }
 
         /** @var User $user */
@@ -92,7 +96,7 @@ readonly class AuthService
         }
 
         if ($user->email_verified_at instanceof Carbon) {
-            throw new Exception('Email already verified');
+            throw new EmailAlreadyVerifiedException;
         }
 
         if ($user->email_verification_code_expiry->isPast()) {
@@ -119,7 +123,7 @@ readonly class AuthService
             ->firstOrFail();
 
         if ($user->email_verified_at) {
-            throw new Exception('Email already verified');
+            throw new EmailAlreadyVerifiedException;
         }
 
         $user->email_verification_code = rand(100000, 999999);
