@@ -2,7 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Dto\User\UserLoginDto;
+use App\Dto\User\UserOtpDto;
+use App\Dto\User\UserRegisterDto;
+use App\Exceptions\Auth\EmailNotVerifiedException;
+use App\Exceptions\Auth\OtpExpiredException;
+use App\Exceptions\Auth\OtpInvalidException;
+use App\Http\Requests\UserRegisterRequest;
+use App\Services\AuthService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,34 +18,42 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        public readonly AuthService $authService
+    ) {}
+
+    /**
+     * @throws Exception
+     * @throws OtpExpiredException
+     * @throws EmailNotVerifiedException
+     */
     public function login(Request $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $userLoginData = UserLoginDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ])
+        );
 
-        /**
-         * @var User $user
-         */
-        $user = User::query()
-            ->where('email', $credentials['email'])
-            ->first();
-
-        /*if ($user->email_verification_code_expiry) {
-            return response()
-                ->json('Please verify your email address', JsonResponse::HTTP_FORBIDDEN);
-        }*/
-
-        if (! Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid login details',
-            ], JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        $this->authService->login($userLoginData);
 
         $request->session()->regenerate();
 
-        return response()->json(['message' => 'connected'], Response::HTTP_OK);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function register(UserRegisterRequest $request): JsonResponse
+    {
+        $user = $this->authService->register(
+            UserRegisterDto::fromArray($request->validated()),
+            $request->user()
+        );
+
+        return new JsonResponse($user, Response::HTTP_CREATED);
     }
 
     public function logout(Request $request): JsonResponse
@@ -48,32 +64,39 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()
-            ->json('disconnected', JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function register(Request $request): JsonResponse
+    /**
+     * @throws Exception
+     * @throws OtpExpiredException
+     * @throws OtpInvalidException
+     */
+    public function checkOtpValidity(Request $request): JsonResponse
+    {
+        $otpData = UserOtpDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email', 'exists:users,email'],
+                'otp' => ['required', 'integer'],
+            ])
+        );
+
+        $user = $this->authService->checkOtpValidity($otpData);
+
+        return new JsonResponse($user, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function resendOtp(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'string'],
+            'email' => ['required', 'email'],
         ]);
 
-        $credentials['password'] = bcrypt($credentials['password']);
+        $this->authService->resendOtp($credentials['email']);
 
-        /*$otp = rand(100000, 999999);
-        $credentials['email_verification_code'] = $otp;
-        $credentials['email_verification_code_expiry'] = now()->addMinutes(5);*/
-
-        /**
-         * @var User $user
-         */
-        $user = User::query()->create($credentials);
-
-        /*$this->sendOtp($user->email, $otp);*/
-
-        return response()
-            ->json($user, JsonResponse::HTTP_CREATED);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
