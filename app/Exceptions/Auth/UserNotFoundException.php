@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use Illuminate\Validation\ValidationException;
+use App\Exceptions\BusinessException;
 
-class UserNotFoundException extends ValidationException
+class UserNotFoundException extends BusinessException
 {
     public function __construct($message = 'User not found, please register first')
     {

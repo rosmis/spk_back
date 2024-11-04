@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use Illuminate\Validation\ValidationException;
+use App\Exceptions\BusinessException;
 
-class OtpInvalidException extends ValidationException
+class OtpInvalidException extends BusinessException
 {
     public function __construct($message = 'Invalid OTP. Please enter the correct OTP: ')
     {

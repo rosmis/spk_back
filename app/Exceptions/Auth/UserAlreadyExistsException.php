@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use Illuminate\Validation\ValidationException;
+use App\Exceptions\BusinessException;
 
-class UserAlreadyExistsException extends ValidationException
+class UserAlreadyExistsException extends BusinessException
 {
     public function __construct($message = 'User already exists')
     {

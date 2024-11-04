@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Auth;
 
-use Illuminate\Validation\ValidationException;
+use App\Exceptions\BusinessException;
 
-class EmailAlreadyVerifiedException extends ValidationException
+class EmailAlreadyVerifiedException extends BusinessException
 {
     public function __construct($message = 'Email already verified')
     {
