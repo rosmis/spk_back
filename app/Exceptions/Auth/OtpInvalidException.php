@@ -6,7 +6,7 @@ use LogicException;
 
 class OtpInvalidException extends LogicException
 {
-    public function __construct($message = 'Invalid OTP. Please enter the correct OTP.')
+    public function __construct($message = 'Invalid OTP. Please enter the correct OTP: ')
     {
         parent::__construct($message);
     }

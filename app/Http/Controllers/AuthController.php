@@ -83,8 +83,6 @@ class AuthController extends Controller
 
         $user = $this->authService->checkOtpValidity($otpData);
 
-        $request->session()->regenerate();
-
         return new JsonResponse($user, Response::HTTP_NO_CONTENT);
     }
 

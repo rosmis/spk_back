@@ -105,8 +105,6 @@ readonly class AuthService
 
         $user->save();
 
-        Auth::login($user);
-
         return $user;
     }
 
