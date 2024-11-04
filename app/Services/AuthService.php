@@ -10,10 +10,13 @@ use App\Dto\User\UserRegisterDto;
 use App\Exceptions\Auth\EmailNotVerifiedException;
 use App\Exceptions\Auth\OtpExpiredException;
 use App\Exceptions\Auth\OtpInvalidException;
+use App\Mail\OtpConfirmationMail;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 readonly class AuthService
 {
@@ -129,8 +132,21 @@ readonly class AuthService
         $this->sendOtp($user->email, $user->email_verification_code);
     }
 
-    public function sendOtp(string $email, int $otp)
+    /**
+     * @throws Exception
+     */
+    private function sendOtp(string $email, int $otp): void
     {
-        return 'TODO OTP MAIL"';
+        try {
+            Mail::to($email)
+                ->send(new OtpConfirmationMail($otp));
+        } catch (Exception $exception) {
+            Log::error('Failed to send OTP', [
+                'email' => $email,
+                'otp' => $otp,
+                'exception' => $exception,
+            ]);
+            throw new Exception('Failed to send OTP');
+        }
     }
 }

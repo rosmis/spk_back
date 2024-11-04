@@ -88,6 +88,9 @@ class AuthController extends Controller
         return new JsonResponse($user, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @throws Exception
+     */
     public function resendOtp(Request $request): JsonResponse
     {
         $credentials = $request->validate([
