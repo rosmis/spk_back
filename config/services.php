@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'brevo' => [
+        'key' => env('API_BREVO_KEY'),
+    ],
+
 ];
