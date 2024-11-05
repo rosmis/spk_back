@@ -22,13 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // display exception error message if exception  instance of BusinessException
         $exceptions->render(function (Throwable $e) {
             if ($e instanceof BusinessException) {
                 return response()->json([
                     'message' => $e->getMessage(),
                 ], $e->getCode());
             }
-
-            return $e;
         });
     })->create();
