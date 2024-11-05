@@ -16,6 +16,8 @@ use Illuminate\Support\Carbon;
  * @property string $remember_token
  * @property ?int $email_verification_code
  * @property ?Carbon $email_verification_code_expiry
+ * @property ?int $password_reset_code
+ * @property ?Carbon $password_reset_code_expiry
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -43,6 +45,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'email_verification_code',
+        'password_reset_code'
     ];
 
     /**
@@ -58,6 +61,7 @@ class User extends Authenticatable
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'email_verification_code_expiry' => 'datetime',
+            'password_reset_code_expiry' => 'datetime',
         ];
     }
 }
