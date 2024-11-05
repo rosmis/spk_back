@@ -6,7 +6,6 @@ use App\Dto\User\ResetPasswordUserDto;
 use App\Dto\User\UserLoginDto;
 use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
-use App\Exceptions\Auth\EmailNotVerifiedException;
 use App\Exceptions\Auth\OtpExpiredException;
 use App\Exceptions\Auth\OtpInvalidException;
 use App\Exceptions\Auth\UserNotFoundException;
@@ -26,8 +25,6 @@ class AuthController extends Controller
 
     /**
      * @throws Exception
-     * @throws OtpExpiredException
-     * @throws EmailNotVerifiedException
      */
     public function login(Request $request): JsonResponse
     {
