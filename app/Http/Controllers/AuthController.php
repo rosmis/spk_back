@@ -8,6 +8,7 @@ use App\Dto\User\UserRegisterDto;
 use App\Exceptions\Auth\EmailNotVerifiedException;
 use App\Exceptions\Auth\OtpExpiredException;
 use App\Exceptions\Auth\OtpInvalidException;
+use App\Exceptions\Auth\UserNotFoundException;
 use App\Http\Requests\UserRegisterRequest;
 use App\Services\AuthService;
 use Exception;
@@ -68,6 +69,20 @@ class AuthController extends Controller
     }
 
     /**
+     * @throws UserNotFoundException
+     */
+    public function forgetPassword(Request $request): JsonResponse
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+        ]);
+
+        $this->authService->forgetPassword($credentials['email']);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
      * @throws Exception
      * @throws OtpExpiredException
      * @throws OtpInvalidException
@@ -84,19 +99,5 @@ class AuthController extends Controller
         $user = $this->authService->checkOtpValidity($otpData);
 
         return new JsonResponse($user, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function resendOtp(Request $request): JsonResponse
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-
-        $this->authService->resendOtp($credentials['email']);
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
