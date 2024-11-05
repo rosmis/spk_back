@@ -14,6 +14,8 @@ Route::prefix('otp')->group(function () {
     Route::post('verify', [AuthController::class, 'checkOtpValidity']);
 
     Route::post('forget-password', [AuthController::class, 'forgetPassword']);
+    Route::post('password-code', [AuthController::class, 'checkPasswordOtpValidity']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
 });
 
 Route::prefix('webhook')->group(function () {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\User\ResetPasswordUserDto;
 use App\Dto\User\UserLoginDto;
 use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
@@ -78,6 +79,42 @@ class AuthController extends Controller
         ]);
 
         $this->authService->forgetPassword($credentials['email']);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws OtpInvalidException
+     * @throws OtpExpiredException
+     */
+    public function checkPasswordOtpValidity(Request $request): JsonResponse
+    {
+        $otpData = UserOtpDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email', 'exists:users,email'],
+                'otp' => ['required', 'integer'],
+            ])
+        );
+
+        $this->authService->checkPasswordOtpValidity($otpData);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $resetPasswordData = ResetPasswordUserDto::fromArray(
+            $request->validate([
+                'email' => ['required', 'email', 'exists:users,email'],
+                'password' => ['required', 'string', 'min:8'],
+                'otp' => ['required', 'integer'],
+            ])
+        );
+
+        $this->authService->resetPassword($resetPasswordData);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

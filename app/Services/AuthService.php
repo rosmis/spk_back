@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Dto\User\ResetPasswordUserDto;
 use App\Dto\User\UserLoginDto;
 use App\Dto\User\UserOtpDto;
 use App\Dto\User\UserRegisterDto;
@@ -119,6 +120,8 @@ readonly class AuthService
         }
 
         if ($user->email_verification_code_expiry->isPast()) {
+            $this->resendOtp($user);
+
             throw new OtpExpiredException;
         }
 
@@ -131,7 +134,68 @@ readonly class AuthService
         return $user;
     }
 
-    public function resendOtp(User $user): void
+    /**
+     * @throws OtpInvalidException
+     * @throws OtpExpiredException
+     */
+    public function resetPassword(ResetPasswordUserDto $resetPasswordUserDto): void
+    {
+        $user = $this->checkPasswordOtpValidity(
+            new UserOtpDto(
+                email: $resetPasswordUserDto->email,
+                otp: $resetPasswordUserDto->password_reset_code,
+            )
+        );
+
+        $user->password = $resetPasswordUserDto->password;
+        $user->password_reset_code = null;
+        $user->password_reset_code_expiry = null;
+
+        $user->save();
+    }
+
+    /**
+     * @throws OtpInvalidException
+     * @throws OtpExpiredException
+     * @throws Exception
+     */
+    public function checkPasswordOtpValidity(UserOtpDto $userOtpDto): User
+    {
+        /**
+         * @var ?User $user
+         */
+        $user = User::query()
+            ->where('email', $userOtpDto->email)
+            ->where('password_reset_code', $userOtpDto->otp)
+            ->first();
+
+        if (! $user) {
+            throw new OtpInvalidException;
+        }
+
+        if ($user->password_reset_code_expiry->isPast()) {
+            $this->resendPasswordOtp($user);
+
+            throw new OtpExpiredException;
+        }
+
+        return $user;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function resendPasswordOtp(User $user): void
+    {
+        $user->password_reset_code = rand(100000, 999999);
+        $user->password_reset_code_expiry = Carbon::now()->addMinutes(5);
+
+        $user->save();
+
+        $this->sendOtp($user->email, $user->password_reset_code);
+    }
+
+    private function resendOtp(User $user): void
     {
         $user->email_verification_code = rand(100000, 999999);
         $user->email_verification_code_expiry = Carbon::now()->addMinutes(5);
