@@ -42,6 +42,7 @@ readonly class AuthService
         if (! $user->email_verified_at) {
             if ($user->email_verification_code_expiry < Carbon::now()) {
                 $this->resendOtp($user);
+
                 throw new OtpExpiredException;
             } else {
                 throw new EmailNotVerifiedException;
