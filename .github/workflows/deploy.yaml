@@ -42,6 +42,6 @@ jobs:
           username: ${{ secrets.PROD_USERNAME }}
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
-            cd /spk
+            cd spk/
             docker compose pull web queue
             docker compose up -d --force-recreate web queue
