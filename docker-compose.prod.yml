@@ -10,6 +10,11 @@ services:
             - '80:80'
             - "443:443"
             - "443:443/udp"
+        deploy:
+            replicas: 2
+            update_config:
+                parallelism: 1
+                order: start-first
         networks:
             - laravel_network
         depends_on:
@@ -19,6 +24,11 @@ services:
         image: ghcr.io/rosmis/spk_back/spk_api:dev
         volumes:
             - './.env:/app/.env'
+        deploy:
+            replicas: 2
+            update_config:
+                parallelism: 1
+                order: start-first
         networks:
             - laravel_network
         depends_on:

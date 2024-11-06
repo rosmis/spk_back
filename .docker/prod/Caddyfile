@@ -4,16 +4,13 @@
     frankenphp
 }
 
-admin.scarpackage.com {
-    root * /var/www/html/public
+api.scarpackage.com {
+    reverse_proxy web:80 {
+        health_path /
+        health_interval 10s
+        health_timeout 5s
+        health_status 200
+    }
     encode gzip
     php_server
-}
-
-pma.scarpackage.com {
-    reverse_proxy phpmyadmin:80
-    encode gzip
-    tls {
-        protocols tls1.2 tls1.3
-    }
 }
