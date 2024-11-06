@@ -30,6 +30,7 @@ COPY . .
 COPY ./.docker/php.ini /usr/local/etc/php/
 COPY ./.docker/entrypoint.sh /entrypoint.sh
 COPY ./.docker/queue-entrypoint.sh /queue-entrypoint.sh
+COPY ./docker/prod/Caddyfile /etc/caddy/Caddyfile
 
 # Install production dependencies
 RUN composer install --optimize-autoloader --no-dev
@@ -40,6 +41,7 @@ RUN chown -R www-data:www-data /app \
 
 RUN chmod +x /entrypoint.sh
 RUN chmod +x /queue-entrypoint.sh
+RUN chmod +x /etc/caddy/Caddyfile
 
 EXPOSE 80 443
 
