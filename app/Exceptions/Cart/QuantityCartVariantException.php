@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Cart;
 
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Exceptions\BusinessException;
 
-class QuantityCartVariantException extends BadRequestHttpException
+class QuantityCartVariantException extends BusinessException
 {
     public function __construct($message = 'The quantity of the variant is not available.')
     {
