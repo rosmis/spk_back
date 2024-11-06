@@ -12,7 +12,7 @@ Route::post('logout', [AuthController::class, 'logout']);
 
 Route::prefix('otp')->group(function () {
     Route::post('verify', [AuthController::class, 'checkOtpValidity']);
-
+    // forgot password routes
     Route::post('forget-password', [AuthController::class, 'forgetPassword']);
     Route::post('password-code', [AuthController::class, 'checkPasswordOtpValidity']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
