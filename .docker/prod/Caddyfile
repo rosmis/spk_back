@@ -6,13 +6,7 @@
 
 api.scarpackage.com {
     root * public/
-
-    reverse_proxy web:80 {
-        health_path /
-        health_interval 10s
-        health_timeout 5s
-        health_status 200
-    }
+    reverse_proxy web:80
     encode gzip
     php_server
 }
