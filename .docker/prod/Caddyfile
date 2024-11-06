@@ -6,7 +6,7 @@
 
 api.scarpackage.com {
     root * public/
-    reverse_proxy web:80
+    reverse_proxy *
     encode gzip
     php_server
 }

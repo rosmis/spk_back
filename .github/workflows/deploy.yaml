@@ -35,13 +35,13 @@ jobs:
         run: |
           echo "Image successfully pushed to ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:dev"
 
-      - name: Deploy to production
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USERNAME }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            cd spk/
-            docker compose pull web queue
-            docker compose up -d --force-recreate web queue
+#      - name: Deploy to production
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.PROD_HOST }}
+#          username: ${{ secrets.PROD_USERNAME }}
+#          key: ${{ secrets.PROD_SSH_KEY }}
+#          script: |
+#            cd spk/
+#            docker compose pull web queue
+#            docker compose up -d --force-recreate web queue
