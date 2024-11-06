@@ -30,7 +30,7 @@ COPY . .
 COPY ./.docker/php.ini /usr/local/etc/php/
 COPY ./.docker/entrypoint.sh /entrypoint.sh
 COPY ./.docker/queue-entrypoint.sh /queue-entrypoint.sh
-COPY ./docker/prod/Caddyfile /etc/caddy/Caddyfile
+COPY ./.docker/prod/Caddyfile /etc/caddy/Caddyfile
 
 # Install production dependencies
 RUN composer install --optimize-autoloader --no-dev
