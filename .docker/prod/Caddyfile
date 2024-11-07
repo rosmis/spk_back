@@ -11,6 +11,7 @@
 {$SERVER_NAME:localhost} {
 
 	root * public/
+    reverse_proxy web:80
 	encode zstd br gzip
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
