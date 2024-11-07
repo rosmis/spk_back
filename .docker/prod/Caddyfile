@@ -7,6 +7,6 @@
 api.scarpackage.com {
     root * public/
 
-    encode gzip
+    encode zstd br gzip
     php_server
 }
