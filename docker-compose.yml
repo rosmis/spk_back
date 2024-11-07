@@ -11,14 +11,13 @@ services:
         tty: true
         ports:
             - '80:80'
-            - "443:443"
-            - "443:443/udp"
         networks:
             - laravel_network
         depends_on:
           db:
               condition: service_healthy
-#    queue:
+
+    #    queue:
 #        build:
 #            context: ./
 #            dockerfile: ./.docker/Dockerfile.dev

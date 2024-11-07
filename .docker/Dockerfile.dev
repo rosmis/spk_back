@@ -39,7 +39,5 @@ RUN chown -R www-data:www-data /app \
 RUN chmod +x /entrypoint.sh
 RUN chmod +x /queue-entrypoint.sh
 
-EXPOSE 80
-
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
