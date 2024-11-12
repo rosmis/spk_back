@@ -1,6 +1,6 @@
 FROM dunglas/frankenphp:php8.3-bookworm
 
-ENV SERVER_NAME="localhost:80"
+ENV SERVER_NAME=api.scarpackage.com
 
 # Install production dependencies
 RUN apt-get update \
@@ -40,6 +40,8 @@ RUN chown -R www-data:www-data /app \
 
 RUN chmod +x /entrypoint.sh
 RUN chmod +x /queue-entrypoint.sh
+
+EXPOSE 80 443
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
