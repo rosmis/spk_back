@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ProductType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ use Illuminate\Support\Collection;
  * @property string $shopify_gid
  * @property string $handle
  * @property string $title
+ * @property ProductType $type
  * @property string $description
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -28,6 +30,10 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'type' => ProductType::class,
+    ];
 
     public function variants(): HasMany
     {

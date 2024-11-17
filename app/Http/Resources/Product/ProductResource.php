@@ -16,6 +16,7 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'title' => $this->resource->title,
+            'type' => $this->resource->type->value,
             'description' => $this->resource->description,
             'variants' => $this->whenLoaded(
                 'variants',
