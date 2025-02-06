@@ -23,11 +23,12 @@ RUN install-php-extensions \
 # Copy Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
 WORKDIR /app
 
 # Copy Laravel files and custom configurations
 COPY . .
-COPY ./.docker/php.ini /usr/local/etc/php/
 COPY ./.docker/entrypoint.sh /entrypoint.sh
 COPY ./.docker/queue-entrypoint.sh /queue-entrypoint.sh
 
