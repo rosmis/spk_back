@@ -20,7 +20,7 @@ final class CartItemDto
     public static function fromArray(array $data): self
     {
         return new self(
-            quantity: $data['quantity'],
+            quantity: (int) $data['quantity'],
             variantId: $data['variantId'],
             imageUrl: $data['imageUrl'],
         );

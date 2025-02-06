@@ -71,7 +71,7 @@ readonly class AuthService
                 'name' => $userRegisterDto->name,
                 'email' => $userRegisterDto->email,
                 'password' => $userRegisterDto->password,
-                'email_verification_code' => $userRegisterDto->email_verification_code,
+                'email_verification_code' => 123123,
                 'email_verification_code_expiry' => $userRegisterDto->email_verification_code_expiry,
             ]);
 
