@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Inspector\Laravel\Facades\Inspector;
 
 readonly class AuthService
 {
@@ -30,28 +31,32 @@ readonly class AuthService
      */
     public function login(UserLoginDto $userLoginDto): void
     {
-        /** @var User $user */
-        $user = User::query()
-            ->where('email', $userLoginDto->email)
-            ->first();
+        Inspector::addSegment(function () use ($userLoginDto) {
+            /** @var User $user */
+            $user = User::query()
+                ->where('email', $userLoginDto->email)
+                ->first();
 
-        if (! $user) {
-            throw new UserNotFoundException;
-        }
-
-        if (! $user->email_verified_at) {
-            if ($user->email_verification_code_expiry < Carbon::now()) {
-                $this->resendOtp($user);
-
-                throw new OtpExpiredException;
-            } else {
-                throw new EmailNotVerifiedException;
+            if (! $user) {
+                throw new UserNotFoundException;
             }
-        }
 
-        if (! Auth::attempt(UserLoginDto::toArray($userLoginDto))) {
-            throw new InvalidLoginDetailsException;
-        }
+            if (! $user->email_verified_at) {
+                if ($user->email_verification_code_expiry < Carbon::now()) {
+                    $this->resendOtp($user);
+
+                    throw new OtpExpiredException;
+                } else {
+                    throw new EmailNotVerifiedException;
+                }
+            }
+        }, 'user login fetch user details');
+
+        Inspector::addSegment(function () use ($userLoginDto) {
+            if (! Auth::attempt(UserLoginDto::toArray($userLoginDto))) {
+                throw new InvalidLoginDetailsException;
+            }
+        }, 'user login attempt');
     }
 
     /**
@@ -76,7 +81,7 @@ readonly class AuthService
             ]);
 
         // TODO : Uncomment below line for production
-//        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
+        //        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
 
         return $user;
     }
