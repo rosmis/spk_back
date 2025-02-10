@@ -75,7 +75,8 @@ readonly class AuthService
                 'email_verification_code_expiry' => $userRegisterDto->email_verification_code_expiry,
             ]);
 
-        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
+        // TODO : Uncomment below line for production
+//        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
 
         return $user;
     }
