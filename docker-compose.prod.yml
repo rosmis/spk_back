@@ -15,6 +15,8 @@ services:
         depends_on:
             db:
                 condition: service_healthy
+            redis:
+                condition: service_healthy
     queue:
         image: ghcr.io/rosmis/spk_back/spk_api:dev
         volumes:
@@ -47,6 +49,14 @@ services:
                 - -p${DB_PASSWORD}
             retries: 3
             timeout: 5s
+    redis:
+        image: redis:latest
+        ports:
+            - "6379:6379"
+        networks:
+            - laravel_network
+        volumes:
+            - redis_data:/data
 networks:
     laravel_network:
         driver: bridge
@@ -55,3 +65,4 @@ volumes:
     sail-mysql:
     caddy_data:
     caddy_config:
+    redis_data:
