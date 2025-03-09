@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  web:
+    image: ghcr.io/rosmis/spk_back/spk_api:dev
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    configs:
+      - source: spk_env_config
+        target: /app/.env
+    tty: true
+    ports:
+      - '80:80'
+      - "443:443"
+      - "443:443/udp"
+    networks:
+      - laravel_network
+    deploy:
+      replicas: 2
+
+  queue:
+    image: ghcr.io/rosmis/spk_back/spk_api:dev
+    configs:
+      - source: spk_env_config
+        target: /app/.env
+    networks:
+      - laravel_network
+    tty: true
+    entrypoint: ["/queue-entrypoint.sh"]
+    deploy:
+      replicas: 1
+
+  db:
+    image: mysql/mysql-server:8.0
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - 'sail-mysql:/var/lib/mysql'
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - laravel_network
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - -p${DB_PASSWORD}
+      retries: 3
+      timeout: 5s
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - laravel_network
+    volumes:
+      - redis_data:/data
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+networks:
+  laravel_network:
+    driver: overlay
+
+volumes:
+  sail-mysql:
+  caddy_data:
+  caddy_config:
+  redis_data:
+
+configs:
+  spk_env_config:
+    external: true
