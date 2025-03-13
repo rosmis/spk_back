@@ -76,12 +76,11 @@ readonly class AuthService
                 'name' => $userRegisterDto->name,
                 'email' => $userRegisterDto->email,
                 'password' => $userRegisterDto->password,
-                'email_verification_code' => 123123,
+                'email_verification_code' => $userRegisterDto->email_verification_code,
                 'email_verification_code_expiry' => $userRegisterDto->email_verification_code_expiry,
             ]);
 
-        // TODO : Uncomment below line for production
-        //        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
+        $this->sendOtp($user->email, $userRegisterDto->email_verification_code);
 
         return $user;
     }
