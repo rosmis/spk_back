@@ -16,8 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
 
-        // TODO remove middleware comment for production
-//        $middleware->throttleApi('60,1');
+        $middleware->throttleApi('60,1');
 
         $middleware
             ->appendToGroup(
