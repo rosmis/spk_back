@@ -12,6 +12,9 @@ Route::prefix('products')->group(function () {
     Route::get('{handle}', [ProductController::class, 'show']);
 });
 
+Route::post('mobile-checkout-url', [CartController::class, 'getMobileCheckoutUrl'])
+    ->middleware('throttle:3,1');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();

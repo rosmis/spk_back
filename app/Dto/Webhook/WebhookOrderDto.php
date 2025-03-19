@@ -10,7 +10,7 @@ final class WebhookOrderDto
         public string $id,
         public string $email,
         public string $reference,
-        public int $user_id
+        public ?int $user_id
     ) {}
 
     /**
@@ -21,8 +21,10 @@ final class WebhookOrderDto
         return new self(
             id: $data['admin_graphql_api_id'],
             email: $data['contact_email'],
-            user_id: (int) $data['note_attributes'][0]['value'],
-            reference: $data['reference']
+            reference: (string) $data['order_number'],
+            user_id: count($data['note_attributes']) > 0
+                ? (int) $data['note_attributes'][0]['value']
+                : null
         );
     }
 }

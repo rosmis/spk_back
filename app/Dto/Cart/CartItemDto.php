@@ -23,6 +23,7 @@ final class CartItemDto
             quantity: (int) $data['quantity'],
             variantId: $data['variantId'],
             imageUrl: $data['imageUrl'],
+            shopifyGid: $data['shopifyGid'] ?? null
         );
     }
 }

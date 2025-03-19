@@ -133,4 +133,18 @@ readonly class CartService
 
         return $this->shopifyService->generateCartCheckoutUrl($cartItemsDto, $user);
     }
+
+    /**
+     * @throws MissingArgumentException
+     */
+    public function getMobileCheckoutUrl(CartItemDto $cartItem): string
+    {
+        // Check cart Item availability
+        App::call(CheckCartItemVariantAvailability::class, ['cartItem' => $cartItem]);
+
+        return $this->shopifyService->generateCartCheckoutUrl(
+            Collection::make([$cartItem])
+        );
+
+    }
 }

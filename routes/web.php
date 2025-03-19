@@ -6,7 +6,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ShopifyController;
 use Illuminate\Support\Facades\Route;
 
-// TODO remove middleware comment for production
 Route::post('login', [AuthController::class, 'login'])
     ->middleware('throttle:3,1');
 Route::post('register', [AuthController::class, 'register'])

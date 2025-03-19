@@ -11,7 +11,6 @@ use App\Factories\StoreFrontFactory;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Shopify\Clients\Storefront;
 use Shopify\Exception\MissingArgumentException;
 
@@ -149,26 +148,36 @@ readonly class ShopifyService implements ShopifyInterface
      * @throws MissingArgumentException
      * @throws Exception
      */
-    public function generateCartCheckoutUrl(Collection $cartItems, User $user): string
-    {
+    public function generateCartCheckoutUrl(
+        Collection $cartItems,
+        ?User $user = null
+    ): string {
         $lineItemsString = $cartItems->map(
             fn (CartItemDto $cartItem) => $this->toLineItemString($cartItem)
         )->implode(',');
+
+        if ($user instanceof User) {
+            $userQuery = '
+                buyerIdentity: {
+                            email: "' . $user->email . '"
+                          }
+                          attributes: [
+                            {
+                              key: "user_id",
+                              value: "' . $user->id . '"
+                            }
+                          ]
+                ';
+        } else {
+            $userQuery = '';
+        }
 
         $queryString = <<<QUERY
             mutation {
               cartCreate(
                 input: {
                   lines: [{$lineItemsString}]
-                  buyerIdentity: {
-                    email: "{$user->email}"
-                  }
-                  attributes: [
-                    {
-                      key: "user_id",
-                      value: "{$user->id}"
-                    }
-                  ]
+                  {$userQuery}
                 }
               ) {
                 cart {

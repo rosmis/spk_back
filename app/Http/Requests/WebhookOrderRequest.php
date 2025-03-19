@@ -16,10 +16,10 @@ class WebhookOrderRequest extends FormRequest
         return [
             'admin_graphql_api_id' => 'required|string',
             'contact_email' => 'required|email',
-            'reference' => 'required|string',
+            'order_number' => 'required|integer',
             'note_attributes' => 'array',
-            'note_attributes.*.name' => 'required|string',
-            'note_attributes.*.value' => 'required|string',
+            'note_attributes.*.name' => 'nullable|string',
+            'note_attributes.*.value' => 'nullable|string',
         ];
     }
 }

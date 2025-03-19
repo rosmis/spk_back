@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'webhook/product',
             'webhook/order',
+            'api/mobile-checkout-url',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

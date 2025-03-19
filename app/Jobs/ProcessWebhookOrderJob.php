@@ -45,6 +45,7 @@ class ProcessWebhookOrderJob implements ShouldQueue
                 'email' => $this->orderDto->email,
                 'order' => $this->orderDto->id,
             ]);
+            return;
         }
 
         try {
