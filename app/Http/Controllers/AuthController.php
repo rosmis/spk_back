@@ -15,7 +15,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inspector\Laravel\Facades\Inspector;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -36,13 +35,9 @@ class AuthController extends Controller
             ])
         );
 
-        Inspector::addSegment(function () use ($userLoginData) {
-            $this->authService->login($userLoginData);
-        }, ' user service login');
+        $this->authService->login($userLoginData);
 
-        Inspector::addSegment(function () use ($request) {
-            $request->session()->regenerate();
-        }, 'user session regeneration');
+        $request->session()->regenerate();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

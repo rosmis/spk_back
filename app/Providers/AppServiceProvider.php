@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Contracts\ShopifyInterface;
 use App\Factories\ShopifyConfigDtoFactory;
+use App\Models\User;
 use App\Services\ShopifyService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoTransportFactory;
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('viewPulse', function (User $user) {
+            return $user->email === 'rosmis123@gmail.com';
+        });
+
         Mail::extend('brevo', function () {
             return (new BrevoTransportFactory)->create(
                 new Dsn(

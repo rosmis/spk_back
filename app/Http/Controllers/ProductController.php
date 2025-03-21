@@ -20,12 +20,12 @@ class ProductController extends Controller
         )->response();
     }
 
-    public function show(string $handle): JsonResponse
-    {
-        $product = $this
-            ->productService
-            ->show($handle);
-
-        return ProductResource::make($product)->response();
-    }
+//    public function show(string $handle): JsonResponse
+//    {
+//        $product = $this
+//            ->productService
+//            ->show($handle);
+//
+//        return ProductResource::make($product)->response();
+//    }
 }

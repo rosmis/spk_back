@@ -8,6 +8,8 @@
         "php": "^8.2",
         "inspector-apm/inspector-laravel": "^4.10",
         "laravel/framework": "^11.0",
+        "laravel/pail": "^1.2",
+        "laravel/pulse": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "predis/predis": "^2.3",
