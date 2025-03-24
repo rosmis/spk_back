@@ -70,6 +70,15 @@ readonly class AuthService
             throw new UserAlreadyExistsException;
         }
 
+        /** @var ?User $existingUser */
+        $existingUser = User::query()
+            ->where('email', $userRegisterDto->email)
+            ->first();
+
+        if ($existingUser instanceof User) {
+            throw new UserAlreadyExistsException;
+        }
+
         /** @var User $user */
         $user = User::query()
             ->create([
