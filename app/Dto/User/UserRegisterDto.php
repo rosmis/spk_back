@@ -26,7 +26,7 @@ final class UserRegisterDto
             email: $data['email'],
             password: bcrypt($data['password']),
             email_verification_code: rand(100000, 999999),
-            email_verification_code_expiry: Carbon::now()->addMinutes(5)
+            email_verification_code_expiry: Carbon::now()->addMinutes(60)
         );
     }
 }

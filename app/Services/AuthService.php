@@ -97,7 +97,7 @@ readonly class AuthService
         }
 
         $user->password_reset_code = rand(100000, 999999);
-        $user->password_reset_code_expiry = Carbon::now()->addMinutes(5);
+        $user->password_reset_code_expiry = Carbon::now()->addMinutes(60);
 
         $user->save();
 
@@ -194,7 +194,7 @@ readonly class AuthService
     private function resendPasswordOtp(User $user): void
     {
         $user->password_reset_code = rand(100000, 999999);
-        $user->password_reset_code_expiry = Carbon::now()->addMinutes(5);
+        $user->password_reset_code_expiry = Carbon::now()->addMinutes(60);
 
         $user->save();
 
@@ -204,7 +204,7 @@ readonly class AuthService
     private function resendOtp(User $user): void
     {
         $user->email_verification_code = rand(100000, 999999);
-        $user->email_verification_code_expiry = Carbon::now()->addMinutes(5);
+        $user->email_verification_code_expiry = Carbon::now()->addMinutes(60);
 
         $user->save();
 
