@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('code/check', [CodeController::class, 'checkCode'])
-        ->middleware('throttle:10,1');
+        ->middleware('throttle:2,1');
 
     Route::prefix('cart')->group(function () {
         Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])

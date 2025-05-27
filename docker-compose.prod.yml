@@ -3,6 +3,7 @@ services:
         image: ghcr.io/rosmis/spk_back/spk_api:dev
         volumes:
             - './.env:/app/.env'
+            - './donotopen.rar:/app/storage/easter_egg/donotopen.rar'
             - caddy_data:/data
             - caddy_config:/config
         tty: true
