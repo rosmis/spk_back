@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CodeController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
     });
+
+    Route::post('code/check', [CodeController::class, 'checkCode'])
+        ->middleware('throttle:10,1');
 
     Route::prefix('cart')->group(function () {
         Route::post('{cart}/checkout-url', [CartController::class, 'getCartCheckoutUrl'])

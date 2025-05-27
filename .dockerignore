@@ -3,6 +3,7 @@
 docker-composer.yml
 bootstrap/cache/*
 storage/app/*
+storage/easter_egg/*
 storage/framework/cache/*
 storage/framework/views/*
 storage/logs/*

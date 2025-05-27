@@ -36,6 +36,12 @@ return [
             'throw' => false,
         ],
 
+        'easter_egg' => [
+            'driver' => 'local',
+            'root' => storage_path('easter_egg'),
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
